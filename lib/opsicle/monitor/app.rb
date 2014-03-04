@@ -56,7 +56,7 @@ module Opsicle
         @screen.close
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
-        exit 0
+        GLI::CustomExit.new("",0)
       end
 
       def restart
