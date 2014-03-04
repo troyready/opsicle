@@ -13,9 +13,6 @@ program_long_desc "For documentation and help in setting up your configuration f
 switch :verbose, :desc => 'Enable Verbose mode for more logging'
 switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces'
 
-
-
-
 desc "Deploy your current app to the given environment stack"
 arg_name '<environment>'
 command :deploy do |c|
@@ -62,17 +59,7 @@ command 'monitor' do |c|
     raise ArgumentError, "Environment is required" unless args.first
 
     @monitor = Opsicle::Monitor::App.new(args.first, global_options.merge(options))
-
-    begin
-      @monitor.start
-    rescue => e
-      say "<%= color('Uh oh, an error occurred while starting the Opsicle Stack Monitor.', RED) %>"
-      say "<%= color('Use --trace to view stack trace.', RED) %>"
-
-      if options.trace
-        raise
-      end
-    end
+    @monitor.start
   end
 end
 

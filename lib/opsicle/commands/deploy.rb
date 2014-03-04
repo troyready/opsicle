@@ -16,17 +16,7 @@ module Opsicle
 
       if options[:monitor]
         @monitor = Opsicle::Monitor::App.new(@environment, options)
-
-        begin
-          @monitor.start
-        rescue => e
-          say "<%= color('Uh oh, an error occurred while starting the Opsicle Stack Monitor.', RED) %>"
-          say "<%= color('Use --trace to view stack trace.', RED) %>"
-
-          if options.trace
-            raise
-          end
-        end
+        @monitor.start
       end
     end
 
