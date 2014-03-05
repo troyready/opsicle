@@ -56,7 +56,7 @@ module Opsicle
         @screen.close
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
-        exit 0
+        raise QuitMonitor
       end
 
       def restart
@@ -143,5 +143,6 @@ module Opsicle
         %x(open 'https://console.aws.amazon.com/opsworks/home?#/stack/#{App.client.config.opsworks_config[:stack_id]}')
       end
     end
+    QuitMonitor = Class.new(StandardError)
   end
 end

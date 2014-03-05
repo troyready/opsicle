@@ -1,85 +1,84 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'commander/import'
+require 'highline/import'
+require 'gli'
 require 'opsicle'
 
-# :name is optional, otherwise uses the basename of this executable
-program :name, 'opsicle'
-program :version, Opsicle::VERSION
-program :description, 'Opsworks Command Line Utility Belt'
-program :help, 'Documentation', 'For documentation and help in setting up your configuration files, '\
-                                'see Opsicle\'s GitHub repo: https://github.com/sportngin/opsicle'
+include GLI::App
 
-global_option('--verbose'){ $verbose = true }
+program_desc 'Opsworks Command Line Utility Belt'
+version Opsicle::VERSION
 
-if ENV['DEBUG']
-  always_trace!
-  $debug = true
-else
-  never_trace!
+wrap_help_text :verbatim
+
+program_long_desc """
+DOCUMENTATION
+    For documentation and help in setting up your configuration files,
+    see Opsicle's GitHub repo: https://github.com/sportngin/opsicle
+"""
+
+switch :verbose, :desc => 'Enable Verbose mode for more logging'
+switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces'
+
+pre do |global_options, command, options, args|
+  $verbose = global_options[:verbose]
+  $debug = global_options[:debug]
+  ENV['GLI_DEBUG'] = $debug.to_s
+  true
 end
-$verbose = true  if ENV['VERBOSE']
 
+on_error do |exception|
+  exit(0) if exception.is_a?(Opsicle::Monitor::QuitMonitor)
+end
 
-default_command :help
-
+desc "Deploy your current app to the given environment stack"
+arg_name '<environment>'
 command :deploy do |c|
-  c.syntax = "opsicle deploy <environment>"
-  c.description = "Deploy your current app to the given environment stack"
-  c.option "-b", "--browser", "Open the OpsWorks deployments screen for this stack on deploy"
-  c.option "-m", "--monitor", "Open the Opsicle Stack Monitor for this stack on deploy"
-  c.action do |args, options|
-    raise ArgumentError, "Environment is required" unless args.first
-    Opsicle::Deploy.new(args.first).execute(options.__hash__)
+  c.switch [:b, :browser], :desc => "Open the OpsWorks deployments screen for this stack on deploy"
+  c.switch [:m, :monitor], :desc => "Open the Opsicle Stack Monitor for this stack on deploy"
+  c.action do |global_options, options, args|
+    raise ArgumentError, 'You must specify an environment' unless args.first
+    Opsicle::Deploy.new(args.first).execute global_options.merge(options)
   end
 end
 
+desc "List all apps in the given environment stack"
+arg_name '<environment>'
 command :list do |c|
-  c.syntax = "opsicle list <environment>"
-  c.description = "List all apps in the given environment stack"
-  c.action do |args, options|
+  c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
-    Opsicle::List.new(args.first).execute(options.__hash__)
+    Opsicle::List.new(args.first).execute global_options.merge options
   end
 end
 
+desc "SSH access to instances in the given environment stack"
+arg_name '<environment>'
 command :ssh do |c|
-  c.syntax = "opsicle ssh <environment>"
-  c.description = "SSH access to instances in the given environment stack"
-  c.action do |args, options|
+  c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
-    Opsicle::SSH.new(args.first).execute(options.__hash__)
+    Opsicle::SSH.new(args.first).execute global_options.merge(options)
   end
 end
 
+desc "Set your user SSH key (PUBLIC KEY) for OpsWorks"
+arg_name '<environment> <key-file>'
 command 'ssh-key' do |c|
-  c.syntax = "opsicle ssh-key <environment> <key-file>"
-  c.description = "Set your user SSH key (PUBLIC KEY) for OpsWorks"
-  c.action do |args, options|
+  c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
     raise ArgumentError, "ssh public key-file is required" unless args[1]
-    Opsicle::SSHKey.new(*args).execute(options.__hash__)
+    Opsicle::SSHKey.new(*args).execute global_options.merge(options)
   end
 end
 
+desc "Launch the Opsicle Stack Monitor for the given environment stack"
+arg_name '<environment>'
 command 'monitor' do |c|
-  c.syntax = "opsicle monitor <environment>"
-  c.description = "Launch the Opsicle Stack Monitor for the given environment stack"
-  c.action do |args, options|
+  c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
 
-    @monitor = Opsicle::Monitor::App.new(args.first, options.__hash__)
-
-    begin
-      @monitor.start
-    rescue => e
-      say "<%= color('Uh oh, an error occurred while starting the Opsicle Stack Monitor.', RED) %>"
-      say "<%= color('Use --trace to view stack trace.', RED) %>"
-
-      if options.trace
-        raise
-      end
-    end
+    @monitor = Opsicle::Monitor::App.new(args.first, global_options.merge(options))
+    @monitor.start
   end
 end
-alias_command :'top', :'monitor'
+
+exit run(ARGV)
