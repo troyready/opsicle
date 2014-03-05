@@ -12,9 +12,9 @@ module Opsicle
       response = client.run_command('deploy')
 
       # Monitoring preferences
-      if options[:browser] == true
+      if options[:browser]
         open_deploy(response[:deployment_id])
-      elsif options[:monitor] == true # Default option
+      elsif options[:monitor] # Default option
         say "<%= color('Starting Stack Monitor...', MAGENTA) %>" if $verbose
         @monitor = Opsicle::Monitor::App.new(@environment, options)
         @monitor.start
