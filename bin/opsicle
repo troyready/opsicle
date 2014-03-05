@@ -85,14 +85,30 @@ end
 desc "Show the OpsWorks URL for the given environment stack"
 arg_name '<environment>'
 command 'opsworks-url' do |c|
-  c.switch [:l, :layers], :desc => "Give URL for the Layers screen"
-  c.switch [:i, :instances], :desc => "Give URL for the Instances screen"
-  c.switch [:a, :apps], :desc => "Give URL for the Apps screen"
-  c.switch [:d, :deployments], :desc => "Give URL for the Deployments screen"
-  c.switch [:m, :monitoring], :desc => "Give URL for the Monitoring screen"
+  c.switch [:l, :layers], :desc => "Give URL for the Layers screen", :negatable => false
+  c.switch [:i, :instances], :desc => "Give URL for the Instances screen", :negatable => false
+  c.switch [:a, :apps], :desc => "Give URL for the Apps screen", :negatable => false
+  c.switch [:d, :deployments], :desc => "Give URL for the Deployments screen", :negatable => false
+  c.switch [:m, :monitoring], :desc => "Give URL for the Monitoring screen", :negatable => false
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
-    url = Opsicle::Client.new(args.first).opsworks_url(options)
+
+    case
+    when options[:layers]
+      page = "layers"
+    when options[:instances]
+      page = "instances"
+    when options[:apps]
+      page = "apps"
+    when options[:deployments]
+      page = "deployments"
+    when options[:monitoring]
+      page = "monitoring"
+    else
+      page = "stack"
+    end
+
+    url = "#{Opsicle::Client.new(args.first).opsworks_url}/#{page}"
     say "<%= color('#{url}', YELLOW) %>"
   end
 end

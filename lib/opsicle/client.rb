@@ -19,6 +19,10 @@ module Opsicle
       aws_client.public_send(command, options)
     end
 
+    def opsworks_url
+      "https://console.aws.amazon.com/opsworks/home?#/stack/#{@config.opsworks_config[:stack_id]}"
+    end
+
     def command_options(command, options={})
       config.opsworks_config.merge(options).merge({ command: { name: command } })
     end
