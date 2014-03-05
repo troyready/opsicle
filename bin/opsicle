@@ -20,6 +20,17 @@ DOCUMENTATION
 switch :verbose, :desc => 'Enable Verbose mode for more logging'
 switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces'
 
+pre do |global_options, command, options, args|
+  $verbose = global_options[:verbose]
+  $debug = global_options[:debug]
+  ENV['GLI_DEBUG'] = $debug.to_s
+  true
+end
+
+on_error do |exception|
+  exit(0) if exception.is_a?(Opsicle::Monitor::QuitMonitor)
+end
+
 desc "Deploy your current app to the given environment stack"
 arg_name '<environment>'
 command :deploy do |c|
