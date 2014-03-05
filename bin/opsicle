@@ -8,7 +8,14 @@ include GLI::App
 
 program_desc 'Opsworks Command Line Utility Belt'
 version Opsicle::VERSION
-program_long_desc "For documentation and help in setting up your configuration files, see Opsicle\'s GitHub repo: https://github.com/sportngin/opsicle"
+
+wrap_help_text :verbatim
+
+program_long_desc """
+DOCUMENTATION
+    For documentation and help in setting up your configuration files,
+    see Opsicle's GitHub repo: https://github.com/sportngin/opsicle
+"""
 
 switch :verbose, :desc => 'Enable Verbose mode for more logging'
 switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces'
