@@ -29,6 +29,7 @@ end
 
 on_error do |exception|
   exit(0) if exception.is_a?(Opsicle::Monitor::QuitMonitor)
+  true
 end
 
 desc "Deploy your current app to the given environment stack"
