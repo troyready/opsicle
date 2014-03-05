@@ -81,4 +81,19 @@ command 'monitor' do |c|
   end
 end
 
+desc "Show the OpsWorks URL for the given environment stack"
+arg_name '<environment>'
+command 'opsworks-url' do |c|
+  c.switch [:l, :layers], :desc => "Give URL for the Layers screen"
+  c.switch [:i, :instances], :desc => "Give URL for the Instances screen"
+  c.switch [:a, :apps], :desc => "Give URL for the Apps screen"
+  c.switch [:d, :deployments], :desc => "Give URL for the Deployments screen"
+  c.switch [:m, :monitoring], :desc => "Give URL for the Monitoring screen"
+  c.action do |global_options, options, args|
+    raise ArgumentError, "Environment is required" unless args.first
+    url = Opsicle::Client.new(args.first).opsworks_url(options)
+    say "<%= color('#{url}', YELLOW) %>"
+  end
+end
+
 exit run(ARGV)
