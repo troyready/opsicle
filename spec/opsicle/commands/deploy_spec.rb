@@ -34,11 +34,11 @@ module Opsicle
         subject.execute({ browser: true })
       end
 
-      it "doesn't open the stack monitor or open the browser window when no-monitor options is given" do
+      it "doesn't open the stack monitor or open the browser window when no-monitor option is given" do
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to_not receive(:new)
 
-        subject.execute({"no-monitor" => true})
+        subject.execute({ monitor: false })
       end
     end
 

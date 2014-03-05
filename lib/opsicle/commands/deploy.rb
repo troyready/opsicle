@@ -7,21 +7,19 @@ module Opsicle
       @client = Client.new(environment)
     end
 
-    def execute(options={})
+    def execute(options={ monitor: true })
       say "<%= color('Starting OpsWorks deploy...', YELLOW) %>"
       response = client.run_command('deploy')
 
       # Monitoring preferences
-      if options["no-monitor"] == true
-        return
-      elsif options[:browser] == true
+      if options[:browser] == true
         open_deploy(response[:deployment_id])
-      else
-        # Default action: Open stack monitor
+      elsif options[:monitor] == true # Default option
         say "<%= color('Starting Stack Monitor...', MAGENTA) %>" if $verbose
         @monitor = Opsicle::Monitor::App.new(@environment, options)
         @monitor.start
       end
+
     end
 
     def open_deploy(deployment_id)

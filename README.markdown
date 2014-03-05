@@ -69,8 +69,9 @@ opsicle deploy staging
 opsicle deploy production
 
 ```
-You may also use `-b or --browser` to open the OpsWorks deployments screen for that app when deploying,
-or `-n or --no-monitor` to ignore both monitoring options
+By default, deploying opens the Opsicle Stack Monitor.
+You may also use `--browser` to open the OpsWorks deployments screen instead,
+or `--no-monitor` to ignore both monitoring options
 
 ### SSH
 ```bash
