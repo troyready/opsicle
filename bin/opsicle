@@ -83,4 +83,35 @@ command 'monitor' do |c|
   end
 end
 
+desc "Show the OpsWorks URL for the given environment stack"
+long_desc """
+    Shows the full OpsWorks URL to a page in the web interface.
+
+    Acceptable arguments to --page include:
+      stack (default)
+      layers
+      instances
+      apps
+      deployments
+      monitoring
+      resources
+      permissions
+
+    Example: 'opsicle opsworks-url staging --page=deployments'
+"""
+arg_name '<environment>'
+command 'opsworks-url' do |c|
+  opsworks_pages = %w[stack, layers, instances, apps, deployments, monitoring, resources, permissions]
+  c.flag [:p, :page],
+         :desc => 'Request a specific page in the OpsWorks web interface',
+         :must_match => opsworks_pages,
+         :default_value => 'stack'
+  c.action do |global_options, options, args|
+    raise ArgumentError, "Environment is required" unless args.first
+
+    url = "#{Opsicle::Client.new(args.first).opsworks_url}/#{options[:page]}"
+    Opsicle::Output.say url
+  end
+end
+
 exit run(ARGV)
