@@ -85,7 +85,7 @@ end
 
 desc "Show the OpsWorks URL for the given environment stack"
 long_desc """
-    Outputs the full URL to a specific OpsWorks web interface page.
+    Shows the full OpsWorks URL to a page in the web interface.
 
     Acceptable arguments to --page include:
       stack (default)
@@ -101,16 +101,16 @@ long_desc """
 """
 arg_name '<environment>'
 command 'opsworks-url' do |c|
-  opsworks_pages = ['stack', 'layers', 'instances', 'apps', 'deployments', 'monitoring', 'resources', 'permissions']
+  opsworks_pages = %w[stack, layers, instances, apps, deployments, monitoring, resources, permissions]
   c.flag [:p, :page],
-         :desc => 'Go to a specific page in the OpsWorks web interface',
+         :desc => 'Request a specific page in the OpsWorks web interface',
          :must_match => opsworks_pages,
-         :default_value => "stack"
+         :default_value => 'stack'
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
 
     url = "#{Opsicle::Client.new(args.first).opsworks_url}/#{options[:page]}"
-    say url
+    Opsicle::Output.say url
   end
 end
 
