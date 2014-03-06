@@ -1,9 +1,5 @@
 require 'spec_helper'
-require 'opsicle/deployments'
-require 'opsicle/monitor/spy/dataspyable'
-require 'opsicle/monitor/translatable'
-require 'opsicle/monitor/spy/deployments'
-require 'opsicle/monitor/app'
+require 'opsicle'
 
 describe Opsicle::Monitor::Spy::Deployments do
   before do

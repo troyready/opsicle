@@ -1,5 +1,5 @@
 require "spec_helper"
-require "opsicle/client"
+require "opsicle"
 
 module Opsicle
   describe Client do

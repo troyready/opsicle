@@ -1,5 +1,5 @@
 require "spec_helper"
-require "opsicle/commands/ssh_key"
+require "opsicle"
 
 module Opsicle
   describe SSHKey do
@@ -16,14 +16,14 @@ module Opsicle
       context "valid ssh key" do
         it "confirms that the given file is a public ssh key" do
           expect(subject).to receive(:validate!)
-          expect(subject).to receive(:say).with(/success/)
+          expect(Output).to receive(:say).with(/success/)
           allow(subject).to receive(:update)
           subject.execute
         end
 
         it "updates the user's ssh-key on opsworks" do
           allow(subject).to receive(:validate!)
-          expect(subject).to receive(:say).with(/success/)
+          expect(Output).to receive(:say).with(/success/)
           expect(subject).to receive(:update)
           subject.execute
         end

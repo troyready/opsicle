@@ -1,7 +1,6 @@
 require "spec_helper"
-require "opsicle/monitor/panel"
+require "opsicle"
 require "curses"
-
 
 describe Opsicle::Monitor::Panel do
 

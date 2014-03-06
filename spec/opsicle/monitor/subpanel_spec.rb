@@ -1,5 +1,5 @@
 require "spec_helper"
-require "opsicle/monitor/subpanel"
+require "opsicle"
 
 
 describe Opsicle::Monitor::Subpanel do

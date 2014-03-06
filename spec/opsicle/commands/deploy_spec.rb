@@ -1,6 +1,5 @@
 require "spec_helper"
-require "opsicle/commands/deploy"
-require "opsicle/monitor"
+require "opsicle"
 
 module Opsicle
   describe Deploy do
@@ -16,7 +15,8 @@ module Opsicle
         allow(Monitor::App).to receive(:new).and_return(monitor)
         allow(monitor).to receive(:start)
 
-        allow(subject).to receive(:say)
+        allow(Output).to receive(:say)
+        allow(Output).to receive(:say_verbose)
       end
 
       it "creates a new deployment and opens stack monitor" do
