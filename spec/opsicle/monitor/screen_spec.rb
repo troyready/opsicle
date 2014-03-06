@@ -1,9 +1,5 @@
 require "spec_helper"
-require "opsicle/monitor/screen"
-require "opsicle/monitor/panels/header"
-require "opsicle/monitor/panels/deployments"
-require "opsicle/monitor/panels/help"
-
+require "opsicle"
 
 describe Opsicle::Monitor::Screen do
 

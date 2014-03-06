@@ -1,5 +1,5 @@
 require "spec_helper"
-require "opsicle/config"
+require "opsicle"
 
 module Opsicle
   describe Config do

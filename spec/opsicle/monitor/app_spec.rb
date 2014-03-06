@@ -1,6 +1,5 @@
 require "spec_helper"
-require "opsicle/monitor/app"
-require "opsicle/monitor/screen"
+require "opsicle"
 
 describe Opsicle::Monitor::App do
 
