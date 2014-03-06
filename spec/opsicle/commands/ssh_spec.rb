@@ -12,7 +12,8 @@ module Opsicle
 
     context "#execute" do
       before do
-        allow(subject).to receive(:say) { "What instance do you want, huh?" }
+        allow(subject).to receive(:tell)
+        allow(subject).to receive(:tell_verbose)
         allow(subject).to receive(:ask).and_return(2)
         allow(subject).to receive(:ssh_username) {"mrderpyman2014"}
       end

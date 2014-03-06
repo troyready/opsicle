@@ -16,7 +16,8 @@ module Opsicle
         allow(Monitor::App).to receive(:new).and_return(monitor)
         allow(monitor).to receive(:start)
 
-        allow(subject).to receive(:say)
+        allow(subject).to receive(:tell)
+        allow(subject).to receive(:tell_verbose)
       end
 
       it "creates a new deployment and opens stack monitor" do

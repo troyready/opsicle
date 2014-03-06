@@ -8,14 +8,14 @@ module Opsicle
     end
 
     def execute(options={ monitor: true })
-      say "<%= color('Starting OpsWorks deploy...', YELLOW) %>"
+      tell "Starting OpsWorks deploy..."
       response = client.run_command('deploy')
 
       # Monitoring preferences
       if options[:browser]
         open_deploy(response[:deployment_id])
       elsif options[:monitor] # Default option
-        say "<%= color('Starting Stack Monitor...', MAGENTA) %>" if $verbose
+        tell_verbose "Starting Stack Monitor..."
         @monitor = Opsicle::Monitor::App.new(@environment, options)
         @monitor.start
       end
@@ -25,10 +25,10 @@ module Opsicle
     def open_deploy(deployment_id)
       if deployment_id
         command = "open 'https://console.aws.amazon.com/opsworks/home?#/stack/#{client.config.opsworks_config[:stack_id]}/deployments'"
-        say "<%= color('Executing shell command: #{command}', MAGENTA) %>" if $verbose
+        tell_verbose "Executing shell command: #{command}"
         %x(#{command})
       else
-        say "<%= color('Deploy failed. No deployment_id was received from OpsWorks', RED) %>"
+        tell "Deploy failed. No deployment_id was received from OpsWorks", "RED"
       end
     end
   end

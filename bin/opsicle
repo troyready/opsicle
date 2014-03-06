@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'highline/import'
 require 'gli'
 require 'opsicle'
 
@@ -19,10 +18,12 @@ DOCUMENTATION
 
 switch :verbose, :desc => 'Enable Verbose mode for more logging'
 switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces'
+switch :color, :desc => 'Use colored output', :default_value => true
 
 pre do |global_options, command, options, args|
   $verbose = global_options[:verbose]
   $debug = global_options[:debug]
+  $color = global_options[:color]
   ENV['GLI_DEBUG'] = $debug.to_s
   true
 end
