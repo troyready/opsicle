@@ -83,33 +83,33 @@ command 'monitor' do |c|
 end
 
 desc "Show the OpsWorks URL for the given environment stack"
+long_desc """
+    Outputs the full URL to a specific OpsWorks web interface page.
+
+    Acceptable arguments to --page include:
+      stack (default)
+      layers
+      instances
+      apps
+      deployments
+      monitoring
+      resources
+      permissions
+
+    Example: 'opsicle opsworks-url staging --page=deployments'
+"""
 arg_name '<environment>'
 command 'opsworks-url' do |c|
-  c.switch [:l, :layers], :desc => "Give URL for the Layers screen", :negatable => false
-  c.switch [:i, :instances], :desc => "Give URL for the Instances screen", :negatable => false
-  c.switch [:a, :apps], :desc => "Give URL for the Apps screen", :negatable => false
-  c.switch [:d, :deployments], :desc => "Give URL for the Deployments screen", :negatable => false
-  c.switch [:m, :monitoring], :desc => "Give URL for the Monitoring screen", :negatable => false
+  opsworks_pages = ['stack', 'layers', 'instances', 'apps', 'deployments', 'monitoring', 'resources', 'permissions']
+  c.flag [:p, :page],
+         :desc => 'Go to a specific page in the OpsWorks web interface',
+         :must_match => opsworks_pages,
+         :default_value => "stack"
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
 
-    case
-    when options[:layers]
-      page = "layers"
-    when options[:instances]
-      page = "instances"
-    when options[:apps]
-      page = "apps"
-    when options[:deployments]
-      page = "deployments"
-    when options[:monitoring]
-      page = "monitoring"
-    else
-      page = "stack"
-    end
-
-    url = "#{Opsicle::Client.new(args.first).opsworks_url}/#{page}"
-    say "<%= color('#{url}', YELLOW) %>"
+    url = "#{Opsicle::Client.new(args.first).opsworks_url}/#{options[:page]}"
+    say url
   end
 end
 
