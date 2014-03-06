@@ -16,8 +16,8 @@ DOCUMENTATION
     see Opsicle's GitHub repo: https://github.com/sportngin/opsicle
 """
 
-switch :verbose, :desc => 'Enable Verbose mode for more logging'
-switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces'
+switch :verbose, :desc => 'Enable Verbose mode for more logging', :negatable => false
+switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces', :negatable => false
 switch :color, :desc => 'Use colored output', :default_value => true
 
 pre do |global_options, command, options, args|
