@@ -1,5 +1,5 @@
 require "spec_helper"
-require "opsicle/commands/list"
+require "opsicle"
 
 module Opsicle
   describe List do

@@ -1,6 +1,5 @@
 require "spec_helper"
-require "opsicle/commands/deploy"
-require "opsicle/monitor"
+require "opsicle"
 
 module Opsicle
   describe Deploy do
@@ -15,22 +14,17 @@ module Opsicle
 
         allow(Monitor::App).to receive(:new).and_return(monitor)
         allow(monitor).to receive(:start)
+
+        allow(Output).to receive(:say)
+        allow(Output).to receive(:say_verbose)
       end
 
-      it "creates a new deployment" do
+      it "creates a new deployment and opens stack monitor" do
         expect(client).to receive(:run_command).with('deploy').and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
-        expect(Monitor::App).to_not receive(:new)
+        expect(Monitor::App).to receive(:new)
 
         subject.execute
-      end
-
-      it "runs the Opsicle Stack Monitor if monitor option is given" do
-        expect(Monitor::App).to receive(:new).and_return(monitor)
-        expect(monitor).to receive(:start)
-        expect(subject).to_not receive(:open_deploy)
-
-        subject.execute({ monitor: true })
       end
 
       it "opens the OpsWorks deployments screen if browser option is given" do
@@ -38,6 +32,13 @@ module Opsicle
         expect(Monitor::App).to_not receive(:new)
 
         subject.execute({ browser: true })
+      end
+
+      it "doesn't open the stack monitor or open the browser window when no-monitor option is given" do
+        expect(subject).to_not receive(:open_deploy)
+        expect(Monitor::App).to_not receive(:new)
+
+        subject.execute({ monitor: false })
       end
     end
 

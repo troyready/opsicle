@@ -1,5 +1,5 @@
 require "spec_helper"
-require "opsicle/commands/ssh"
+require "opsicle"
 
 module Opsicle
   describe SSH do
@@ -12,7 +12,8 @@ module Opsicle
 
     context "#execute" do
       before do
-        allow(subject).to receive(:say) { "What instance do you want, huh?" }
+        allow(Output).to receive(:say)
+        allow(Output).to receive(:say_verbose)
         allow(subject).to receive(:ask).and_return(2)
         allow(subject).to receive(:ssh_username) {"mrderpyman2014"}
       end

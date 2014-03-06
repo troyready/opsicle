@@ -4,6 +4,7 @@ Signal.trap("INT") do
   exit 1
 end
 
+require "opsicle/output"
 require "opsicle/version"
 require "opsicle/commands"
 require "opsicle/monitor"

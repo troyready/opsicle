@@ -10,9 +10,9 @@ module Opsicle
       if instances.length == 1
         choice = 1
       else
-        say "Choose an Opsworks instance: \n"
+        Output.say "Choose an Opsworks instance:"
         instances.each_index do |x|
-          say "#{x+1}) #{instances[x][:hostname]}"
+          Output.say "#{x+1}) #{instances[x][:hostname]}"
         end
         choice = ask("? ", Integer) { |q| q.in = 1..instances.length }
       end
@@ -20,7 +20,7 @@ module Opsicle
       instance_ip = instances[choice-1][:elastic_ip] || instances[choice-1][:public_ip]
 
       command = "ssh #{ssh_username}@#{instance_ip}"
-      say "<%= color('Executing shell command: #{command}', YELLOW) %>" if $verbose
+      Output.say_verbose "Executing shell command: #{command}"
       system(command)
     end
 
