@@ -14,7 +14,7 @@ module Opsicle
       before do
         allow(Output).to receive(:say)
         allow(Output).to receive(:say_verbose)
-        allow(subject).to receive(:ask).and_return(2)
+        allow(Output).to receive(:ask).and_return(2)
         allow(subject).to receive(:ssh_username) {"mrderpyman2014"}
       end
 
