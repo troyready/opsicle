@@ -13,7 +13,8 @@ module Opsicle
           :error => [:bold, :red],
           :warning => [:bold, :yellow],
           :verbose => [:bold, :magenta],
-          :debug => [:bold, :green],
+          :debug => [:bold, :cyan],
+          :success => [:bold, :green],
       )
     end
 
