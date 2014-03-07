@@ -101,7 +101,7 @@ long_desc """
 """
 arg_name '<environment>'
 command 'opsworks-url' do |c|
-  opsworks_pages = %w[stack layers instances apps deployments monitoring resources permissions]
+  opsworks_pages = %w(stack layers instances apps deployments monitoring resources permissions)
   c.flag [:p, :page],
          :desc => 'Request a specific page in the OpsWorks web interface',
          :must_match => opsworks_pages,
