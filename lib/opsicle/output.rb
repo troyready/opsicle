@@ -1,17 +1,36 @@
-require 'highline/import'
+require 'highline'
 
 module Opsicle
   module Output
-    def self.say(msg, color_requested=nil)
-      if $color && color_requested
-        super "<%= color('#{msg}', #{color_requested}) %>"
+    def self.terminal
+      HighLine.color_scheme = color_scheme
+      @terminal ||= HighLine.new
+    end
+
+    def self.color_scheme
+      @color_scheme ||= HighLine::ColorScheme.new(
+          :normal => [],
+          :error => [:bold, :red],
+          :warning => [:bold, :yellow],
+          :verbose => [:bold, :magenta],
+          :debug => [:bold, :green],
+      )
+    end
+
+    def self.say(msg, log_style=:normal)
+      if $color
+        terminal.say "<%= color('#{msg}', '#{log_style}') %>"
       else
-        super msg
+        terminal.say msg
       end
     end
 
-    def self.say_verbose(msg, color="MAGENTA")
-      self.say "<%= color('#{msg}', #{color}) %>" if $verbose
+    def self.say_verbose(msg)
+      terminal.say "<%= color('#{msg}', 'verbose') %>" if $verbose
+    end
+
+    def self.ask(*args)
+      terminal.ask(*args)
     end
   end
 end
