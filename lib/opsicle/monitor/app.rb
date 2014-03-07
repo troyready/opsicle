@@ -64,10 +64,10 @@ module Opsicle
       end
 
       def do_command(key)
-        command = { q: :stop,
-                    h: [:set_screen, :help],
-                    b: :open_opsworks_browser,
-                    d: [:set_screen, :deployments] }[key.to_sym]
+        command = { 'q' => :stop,
+                    'h' => [:set_screen, :help],
+                    'b' => :open_opsworks_browser,
+                    'd' => [:set_screen, :deployments] }[key]
         command ||= :invalid_input
 
         send *command unless command == :invalid_input
