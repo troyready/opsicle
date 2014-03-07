@@ -28,7 +28,7 @@ module Opsicle
         Output.say_verbose "Executing shell command: #{command}"
         %x(#{command})
       else
-        Output.say "Deploy failed. No deployment_id was received from OpsWorks", "RED"
+        Output.say "Deploy failed. No deployment_id was received from OpsWorks", :error
       end
     end
   end

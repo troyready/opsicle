@@ -14,7 +14,7 @@ module Opsicle
         instances.each_index do |x|
           Output.say "#{x+1}) #{instances[x][:hostname]}"
         end
-        choice = ask("? ", Integer) { |q| q.in = 1..instances.length }
+        choice = Output.ask("? ", Integer) { |q| q.in = 1..instances.length }
       end
 
       instance_ip = instances[choice-1][:elastic_ip] || instances[choice-1][:public_ip]
