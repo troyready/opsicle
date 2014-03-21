@@ -89,6 +89,15 @@ opsicle ssh-key staging <key-file>
 opsicle monitor staging
 
 ```
+### Updating Custom Chef Recipes
+```bash
+ # Upload a cookbooks directory to S3 and update the stack's custom cookbooks
+ opsicle chef-update staging
+ 
+```
+This command accepts a --path argument to the directory of cookbooks to upload. It defaults to 'cookbooks'.
+It also accepts a --bucket-name for the base s3 bucket. This flag is required unless the bucket-name is configured in the .opsicle config as the chef_s3_bucket_name
+ 
 
 Opsicle accepts a `--verbose` flag or the VERBOSE environment variable to show additional information as commands are run.
 

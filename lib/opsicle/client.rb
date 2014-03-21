@@ -2,21 +2,23 @@ require 'opsicle/config'
 
 module Opsicle
   class Client
-    attr_reader :aws_client
+    attr_reader :opsworks
+    attr_reader :s3
     attr_reader :config
 
     def initialize(environment)
       @config = Config.new(environment)
       @config.configure_aws!
-      @aws_client = AWS::OpsWorks.new.client
+      @opsworks = AWS::OpsWorks.new.client
+      @s3 = AWS::S3.new
     end
 
     def run_command(command, options={})
-      aws_client.create_deployment(command_options(command, options))
+      opsworks.create_deployment(command_options(command, options))
     end
 
     def api_call(command, options={})
-      aws_client.public_send(command, options)
+      opsworks.public_send(command, options)
     end
 
     def opsworks_url
