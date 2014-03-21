@@ -96,7 +96,7 @@ opsicle monitor staging
  
 ```
 This command accepts a --path argument to the cookboks but defaults cookbooks in the current directory.
-It also accepts a --bucket-name for the s3 bucket this is required. The bucket-name also can be configured in the .opsicle config as well as the chef_s3_bucket_name
+It also accepts a --bucket-name for the base s3 bucket. This flag is required unless the bucket-name is configured in the .opsicle config as the chef_s3_bucket_name
  
 
 Opsicle accepts a `--verbose` flag or the VERBOSE environment variable to show additional information as commands are run.
