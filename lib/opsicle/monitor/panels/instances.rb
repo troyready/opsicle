@@ -18,7 +18,7 @@ module Opsicle
               [1, translate[:heading][:hostname], nil],
               [1, translate[:heading][:status], nil],
               [1, translate[:heading][:zone], nil],
-              [1, translate[:heading][:public_ip], nil]
+              [1, translate[:heading][:ip], nil]
             ],
           ]
 
@@ -27,7 +27,7 @@ module Opsicle
               [1, -> { @spies[:instances][i][:hostname] }, nil],
               [1, -> { @spies[:instances][i][:status] }, nil],
               [1, -> { @spies[:instances][i][:zone] }, nil],
-              [1, -> { @spies[:instances][i][:public_ip] }, nil]
+              [1, -> { @spies[:instances][i][:elastic_ip] }, nil]
             ]
           end
 

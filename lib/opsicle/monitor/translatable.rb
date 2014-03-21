@@ -27,7 +27,7 @@ module Opsicle
             command: "COMMAND",
             hostname: "HOSTNAME",
             zone: "AZ",
-            public_ip: "PUBLIC IP"
+            ip: "IP ADDRESS"
           }
         }
       end

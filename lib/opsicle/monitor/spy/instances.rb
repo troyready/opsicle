@@ -21,7 +21,7 @@ module Opsicle
               :hostname => instance[:hostname],
               :status => instance[:status],
               :zone => instance[:availability_zone],
-              :public_ip => instance[:public_ip]
+              :elastic_ip => instance[:elastic_ip]
             }
           end
 
