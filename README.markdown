@@ -92,7 +92,7 @@ opsicle monitor staging
 ### Updating Custom Chef Recipes
 ```bash
  # Upload a cookbooks directory to S3 and update the stack's custom cookbooks
- opsicle chef-update staging
+ opsicle chef-update staging --bucket-name my-opsworks-cookbooks
  
 ```
 This command accepts a --path argument to the directory of cookbooks to upload. It defaults to 'cookbooks'.
