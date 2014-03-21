@@ -24,7 +24,11 @@ module Opsicle
             created_at: "STARTED",
             completed_at: "COMPLETED",
             user: "USER",
-            command: "COMMAND"
+            command: "COMMAND",
+            hostname: "HOSTNAME",
+            zone: "AZ",
+            ip: "IP ADDRESS",
+            ec2_instance_id: "EC2 INSTANCE ID"
           }
         }
       end

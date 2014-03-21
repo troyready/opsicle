@@ -19,6 +19,9 @@ module Opsicle
               [1, "'d' : Show deployment list on this OpsWorks stack", nil],
             ],
             [
+              [1, "'i' : Show instance list on this OpsWorks stack", nil],
+            ],
+            [
               [1, "'b' : Open OpsWorks screen for this stack in your browser", nil],
             ],
             [
