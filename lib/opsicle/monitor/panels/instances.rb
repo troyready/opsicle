@@ -15,6 +15,7 @@ module Opsicle
           # ]
           s = [
             [ # table header slots
+              [1, translate[:heading][:ec2_instance_id], nil],
               [1, translate[:heading][:hostname], nil],
               [1, translate[:heading][:status], nil],
               [1, translate[:heading][:zone], nil],
@@ -24,6 +25,7 @@ module Opsicle
 
           (0...(height - 1)).each do |i|
             s << [ # table row slots
+              [1, -> { @spies[:instances][i][:ec2_instance_id] }, nil],
               [1, -> { @spies[:instances][i][:hostname] }, nil],
               [1, -> { @spies[:instances][i][:status] }, nil],
               [1, -> { @spies[:instances][i][:zone] }, nil],

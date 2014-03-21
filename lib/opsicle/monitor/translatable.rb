@@ -27,7 +27,8 @@ module Opsicle
             command: "COMMAND",
             hostname: "HOSTNAME",
             zone: "AZ",
-            ip: "IP ADDRESS"
+            ip: "IP ADDRESS",
+            ec2_instance_id: "EC2 INSTANCE ID"
           }
         }
       end

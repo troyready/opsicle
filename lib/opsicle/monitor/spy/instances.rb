@@ -18,6 +18,7 @@ module Opsicle
           @instances.data.each do |instance|
             # Massage the API data for our uses
             h << {
+              :ec2_instance_id => instance[:ec2_instance_id],
               :hostname => instance[:hostname],
               :status => instance[:status],
               :zone => instance[:availability_zone],
