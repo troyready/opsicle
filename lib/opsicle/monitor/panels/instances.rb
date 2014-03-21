@@ -27,7 +27,7 @@ module Opsicle
               [1, -> { @spies[:instances][i][:hostname] }, nil],
               [1, -> { @spies[:instances][i][:status] }, nil],
               [1, -> { @spies[:instances][i][:zone] }, nil],
-              [1, -> { @spies[:instances][i][:elastic_ip] }, nil]
+              [1, -> { @spies[:instances][i][:ip] }, nil]
             ]
           end
 
