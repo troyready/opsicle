@@ -92,7 +92,7 @@ opsicle monitor staging
 
 ### Updating Custom Chef Recipes
 ```bash
-# Upload a cookbooks directory to S3 and update the stack's custom cookbooks
+# Upload a cookbooks directory to S3 and updathe the stack's custom cookbooks
 opsicle chef-update staging
 
 ```
