@@ -25,7 +25,7 @@ module Opsicle
             [
               [2, translate[:program], nil],
               [2, -> {
-                [:deployments, :help].map do |e|
+                [:deployments, :instances, :help].map do |e|
                   translate[:menu][(e == @panel_main ? :active : :inactive)][e]
                 end.join("  ")
               }, nil],

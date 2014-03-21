@@ -24,7 +24,10 @@ module Opsicle
             created_at: "STARTED",
             completed_at: "COMPLETED",
             user: "USER",
-            command: "COMMAND"
+            command: "COMMAND",
+            hostname: "HOSTNAME",
+            zone: "AZ",
+            public_ip: "PUBLIC IP"
           }
         }
       end

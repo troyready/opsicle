@@ -67,7 +67,8 @@ module Opsicle
         command = { 'q' => :stop,
                     'h' => [:set_screen, :help],
                     'b' => :open_opsworks_browser,
-                    'd' => [:set_screen, :deployments] }[key]
+                    'd' => [:set_screen, :deployments],
+                    'i' => [:set_screen, :instances], }[key]
         command ||= :invalid_input
 
         send *command unless command == :invalid_input
