@@ -117,6 +117,11 @@ end
 desc "Update the Stack Custom Chef Cookbooks"
 arg_name '<environment>'
 command 'chef-update' do |c|
+  c.flag [:path],
+    :desc => "Path to the directory of chef cookbooks to be uploaded to s3",
+    :default_value => "cookbooks"
+  c.flag [:"bucket-name"],
+    :desc => "The S3 bucket name to upload the cookbooks to"
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
 
