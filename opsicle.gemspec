@@ -19,14 +19,14 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "aws-sdk", "~> 1.30"
-  spec.add_dependency "gli"
-  spec.add_dependency "highline"
-  spec.add_dependency "terminal-table"
-  spec.add_dependency "minitar"
+  spec.add_dependency "gli", "~> 2.9"
+  spec.add_dependency "highline", "~> 1.6"
+  spec.add_dependency "terminal-table", "~> 1.4"
+  spec.add_dependency "minitar", "~> 0.5"
 
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "rspec", "3.0.0.beta1" # Pinning to beta1 until https://github.com/guard/guard-rspec/pull/250 is closed
-  spec.add_development_dependency "guard"
-  spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "rake", "~> 10.1"
+  spec.add_development_dependency "rspec", "~> 2.14"
+  spec.add_development_dependency "guard", "~> 2.5"
+  spec.add_development_dependency "guard-rspec", "~> 4.2"
 end
