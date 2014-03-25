@@ -33,6 +33,8 @@ on_error do |exception|
   true
 end
 
+commands_from "../lib/opsicle/commands"
+
 desc "Deploy your current app to the given environment stack"
 arg_name '<environment>'
 command :deploy do |c|
@@ -50,15 +52,6 @@ command :list do |c|
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
     Opsicle::List.new(args.first).execute global_options.merge options
-  end
-end
-
-desc "SSH access to instances in the given environment stack"
-arg_name '<environment>'
-command :ssh do |c|
-  c.action do |global_options, options, args|
-    raise ArgumentError, "Environment is required" unless args.first
-    Opsicle::SSH.new(args.first).execute global_options.merge(options)
   end
 end
 

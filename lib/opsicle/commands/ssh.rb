@@ -1,3 +1,14 @@
+require 'opsicle/client'
+
+desc "SSH access to instances in the given environment stack"
+arg_name '<environment>'
+command :ssh do |c|
+  c.action do |global_options, options, args|
+    raise ArgumentError, "Environment is required" unless args.first
+    Opsicle::SSH.new(args.first).execute global_options.merge(options)
+  end
+end
+
 module Opsicle
   class SSH
     attr_reader :client
