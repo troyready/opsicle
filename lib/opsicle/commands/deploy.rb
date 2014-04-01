@@ -10,7 +10,7 @@ module Opsicle
     def execute(options={ monitor: true })
       Output.say "Starting OpsWorks deploy..."
       command_args = {}
-      command_args["migrate"] = [options[:migrate].to_s] if options[:migrate]
+      command_args["migrate"] = [options[:datamigrate].to_s] if options[:datamigrate]
       response = client.run_command('deploy', command_args)
 
       # Monitoring preferences
