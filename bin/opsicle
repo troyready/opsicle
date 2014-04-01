@@ -37,6 +37,7 @@ desc "Deploy your current app to the given environment stack"
 arg_name '<environment>'
 command :deploy do |c|
   c.switch [:b, :browser], :desc => "Open the OpsWorks deployments screen for this stack on deploy"
+  c.switch [:d, :migrate], :desc => "Deploy with migrations"
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
   c.action do |global_options, options, args|
     raise ArgumentError, 'You must specify an environment' unless args.first

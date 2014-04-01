@@ -19,7 +19,7 @@ module Opsicle
         expect(config).to receive(:configure_aws!)
         expect(aws_client).to receive(:create_deployment).with(
           hash_including(
-            command: { name: 'deploy' },
+            command: { name: 'deploy', args: {} },
             stack_id: 'stack',
             app_id: 'app'
           )
