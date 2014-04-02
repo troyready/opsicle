@@ -33,6 +33,12 @@ module Opsicle
         subject.execute({ monitor: false, migrate: true })
       end
 
+      it "creates a new deployment migrations explicitly disabled" do
+        expect(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
+        expect(subject).to_not receive(:open_deploy)
+        subject.execute({ monitor: false, migrate: false })
+      end
+
       it "opens the OpsWorks deployments screen if browser option is given" do
         expect(subject).to receive(:open_deploy)
         expect(Monitor::App).to_not receive(:new)
