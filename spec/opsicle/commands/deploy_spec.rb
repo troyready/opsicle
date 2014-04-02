@@ -30,7 +30,7 @@ module Opsicle
       it "creates a new deployment with migrations" do
         expect(client).to receive(:run_command).with('deploy', {"migrate"=>["true"]}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
-        subject.execute({ monitor: false, datamigrate: true })
+        subject.execute({ monitor: false, migrate: true })
       end
 
       it "opens the OpsWorks deployments screen if browser option is given" do
