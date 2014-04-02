@@ -14,7 +14,9 @@ module Opsicle
     end
 
     def run_command(command, command_args={}, options={})
-      opsworks.create_deployment(command_options(command, command_args, options))
+      opts = command_options(command, command_args, options)
+      Output.say_verbose "OpsWorks call: create_deployment(#{opts})"
+      opsworks.create_deployment(opts)
     end
 
     def api_call(command, options={})
