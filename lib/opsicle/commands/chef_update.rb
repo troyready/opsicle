@@ -1,9 +1,11 @@
 require 'opsicle/s3_bucket'
 require 'zlib'
 require 'archive/tar/minitar'
+require "opsicle/deploy_helper"
 
 module Opsicle
   class ChefUpdate
+    include DeployHelper
     attr_reader :client
     attr_reader :tar_file
     attr_reader :stack
@@ -19,8 +21,8 @@ module Opsicle
       tar_cookbooks(options[:path])
       s3_upload(options[:"bucket-name"])
       cleanup_tar
-      update_custom_cookbooks
-      launch_stack_monitor(options)
+      response = update_custom_cookbooks
+      launch_stack_monitor(response, options)
     end
 
     private
@@ -43,12 +45,6 @@ module Opsicle
     def update_custom_cookbooks
       Output.say "Starting OpsWorks Custom Cookboks Update..."
       client.run_command('update_custom_cookbooks')
-    end
-
-    def launch_stack_monitor(options)
-      Output.say_verbose "Starting Stack Monitor..."
-      @monitor = Opsicle::Monitor::App.new(@environment, options)
-      @monitor.start
     end
   end
 end

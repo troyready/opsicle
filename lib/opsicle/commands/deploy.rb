@@ -1,5 +1,8 @@
+require "opsicle/deploy_helper"
+
 module Opsicle
   class Deploy
+    include DeployHelper
     attr_reader :client
 
     def initialize(environment)
@@ -9,32 +12,14 @@ module Opsicle
 
     def execute(options={ monitor: true })
       Output.say "Starting OpsWorks deploy..."
-      
-      #so this is how to format the command arguments: 
+
+      #so this is how to format the command arguments:
       #http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/OpsWorks/Client.html#create_deployment-instance_method
       command_args = {}
       command_args["migrate"] = [options[:migrate].to_s] if options[:migrate]
       response = client.run_command('deploy', command_args)
 
-      # Monitoring preferences
-      if options[:browser]
-        open_deploy(response[:deployment_id])
-      elsif options[:monitor] # Default option
-        Output.say_verbose "Starting Stack Monitor..."
-        @monitor = Opsicle::Monitor::App.new(@environment, options)
-        @monitor.start
-      end
-
-    end
-
-    def open_deploy(deployment_id)
-      if deployment_id
-        command = "open 'https://console.aws.amazon.com/opsworks/home?#/stack/#{client.config.opsworks_config[:stack_id]}/deployments'"
-        Output.say_verbose "Executing shell command: #{command}"
-        %x(#{command})
-      else
-        Output.say "Deploy failed. No deployment_id was received from OpsWorks", :error
-      end
+      launch_stack_monitor(response, options)
     end
   end
 end
