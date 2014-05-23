@@ -10,7 +10,7 @@ module Opsicle
       let(:monitor) { double(:start => nil) }
       before do
         allow(Client).to receive(:new).with('derp').and_return(client)
-        allow(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}).and_return({deployment_id: 'derp'})
+        allow(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {}).and_return({deployment_id: 'derp'})
 
         allow(Monitor::App).to receive(:new).and_return(monitor)
         allow(monitor).to receive(:start)
@@ -20,7 +20,7 @@ module Opsicle
       end
 
       it "creates a new execute_recipes deployment and opens stack monitor" do
-        expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}).and_return({deployment_id: 'derp'})
+        expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to receive(:new)
 
@@ -30,9 +30,17 @@ module Opsicle
       context "multiple recipes" do
         subject { ExecuteRecipes.new('derp', 'herp', 'flurp') }
         it "creates a new execute_recipes deployment with multiple recipes" do
-          expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp', 'flurp']}).and_return({deployment_id: 'derp'})
+          expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp', 'flurp']}, {}).and_return({deployment_id: 'derp'})
           expect(subject).to_not receive(:open_deploy)
           subject.execute({ monitor: false })
+        end
+      end
+
+      context "instance_ids provided" do
+        let(:instance_id) { "6df39ff7-711c-4a58-a64c-0b0e3195af73" }
+        it "creates a new execute_recipes deployment for the specific instance_ids" do
+          expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {"instance_ids" => [instance_id]}).and_return({deployment_id: 'derp'})
+          subject.execute({ monitor: false, instance_ids: [instance_id] })
         end
       end
 
