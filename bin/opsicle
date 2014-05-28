@@ -135,10 +135,10 @@ arg_name '<environment>'
 arg_name '<recipe>'
 command 'execute-recipes' do |c|
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
+  c.flag [:r, :recipes], :desc => 'The recipes to execute', :type => Array, :required => true
   c.flag [:i, :instance_ids], :desc => 'The specific instances to execute recipes on', :type => Array
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
-    raise ArgumentError, "At least one recipe is required" unless args[1]
 
     Opsicle::ExecuteRecipes.new(*args).execute global_options.merge(options)
   end

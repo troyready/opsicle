@@ -5,10 +5,9 @@ module Opsicle
     include DeployHelper
     attr_reader :client, :recipes
 
-    def initialize(environment, *recipes)
+    def initialize(environment)
       @environment = environment
       @client = Client.new(environment)
-      @recipes = recipes
     end
 
     def execute(options={ monitor: true })
@@ -17,7 +16,7 @@ module Opsicle
       #so this is how to format the command arguments:
       #http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/OpsWorks/Client.html#create_deployment-instance_method
       command_args = {}
-      command_args["recipes"] = recipes
+      command_args["recipes"] = options[:recipes]
 
       command_opts = {}
       command_opts["instance_ids"] = options[:instance_ids] if options[:instance_ids]

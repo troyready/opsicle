@@ -3,7 +3,8 @@ require "opsicle"
 
 module Opsicle
   describe ExecuteRecipes do
-    subject { ExecuteRecipes.new('derp', 'herp') }
+    subject { ExecuteRecipes.new('derp') }
+    let(:recipes) { ['herp'] }
 
     context "#execute" do
       let(:client) { double }
@@ -24,15 +25,15 @@ module Opsicle
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to receive(:new)
 
-        subject.execute
+        subject.execute({ monitor: true, recipes: recipes })
       end
 
       context "multiple recipes" do
-        subject { ExecuteRecipes.new('derp', 'herp', 'flurp') }
+        let(:recipes) { ['herp', 'flurp'] }
         it "creates a new execute_recipes deployment with multiple recipes" do
           expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp', 'flurp']}, {}).and_return({deployment_id: 'derp'})
           expect(subject).to_not receive(:open_deploy)
-          subject.execute({ monitor: false })
+          subject.execute({ monitor: false, recipes: recipes })
         end
       end
 
@@ -40,7 +41,7 @@ module Opsicle
         let(:instance_id) { "6df39ff7-711c-4a58-a64c-0b0e3195af73" }
         it "creates a new execute_recipes deployment for the specific instance_ids" do
           expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {"instance_ids" => [instance_id]}).and_return({deployment_id: 'derp'})
-          subject.execute({ monitor: false, instance_ids: [instance_id] })
+          subject.execute({ monitor: false, instance_ids: [instance_id], recipes: recipes })
         end
       end
 
@@ -48,14 +49,14 @@ module Opsicle
         expect(subject).to receive(:open_deploy)
         expect(Monitor::App).to_not receive(:new)
 
-        subject.execute({ browser: true })
+        subject.execute({ browser: true, recipes: recipes })
       end
 
       it "doesn't open the stack monitor or open the browser window when no-monitor option is given" do
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to_not receive(:new)
 
-        subject.execute({ monitor: false })
+        subject.execute({ monitor: false, recipes: recipes })
       end
     end
 
