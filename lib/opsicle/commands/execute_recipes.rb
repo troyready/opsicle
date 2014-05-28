@@ -1,9 +1,9 @@
 require "opsicle/deploy_helper"
 
 module Opsicle
-  class Deploy
+  class ExecuteRecipes
     include DeployHelper
-    attr_reader :client
+    attr_reader :client, :recipes
 
     def initialize(environment)
       @environment = environment
@@ -11,14 +11,17 @@ module Opsicle
     end
 
     def execute(options={ monitor: true })
-      Output.say "Starting OpsWorks deploy..."
+      Output.say "Starting OpsWorks chef run..."
 
       #so this is how to format the command arguments:
       #http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/OpsWorks/Client.html#create_deployment-instance_method
       command_args = {}
-      command_args["migrate"] = [options[:migrate].to_s] if options[:migrate]
-      response = client.run_command('deploy', command_args)
+      command_args["recipes"] = options[:recipes]
 
+      command_opts = {}
+      command_opts["instance_ids"] = options[:instance_ids] if options[:instance_ids]
+
+      response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
     end
   end

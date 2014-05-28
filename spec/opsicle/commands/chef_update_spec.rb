@@ -117,12 +117,12 @@ module Opsicle
     end
 
     context "#launch_stack_monitor" do
-      let(:options) { { derp: 'herp' } }
+      let(:options) { { derp: 'herp', monitor: true } }
       it "launches the opsicle stack monitor" do
 
         expect(Monitor::App).to receive(:new).with('derp', options)
 
-        subject.send :launch_stack_monitor, options
+        subject.send :launch_stack_monitor, nil, options
       end
     end
   end
