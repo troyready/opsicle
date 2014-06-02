@@ -18,9 +18,11 @@ module Opsicle
     end
 
     def execute(options={ monitor: true })
-      tar_cookbooks(options[:path])
-      s3_upload(options[:"bucket-name"])
-      cleanup_tar
+      if options[:"bucket-name"]
+        tar_cookbooks(options[:path])
+        s3_upload(options[:"bucket-name"])
+        cleanup_tar
+      end
       response = update_custom_cookbooks
       launch_stack_monitor(response, options)
     end

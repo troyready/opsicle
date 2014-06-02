@@ -26,35 +26,37 @@ module Opsicle
     end
 
     context "#execute" do
+      context "s3 upload" do
 
-      it "tars up the cookooks" do
-        allow(subject).to receive(:s3_upload)
-        allow(subject).to receive(:cleanup_tar)
-        allow(subject).to receive(:update_custom_cookbooks)
-        allow(subject).to receive(:launch_stack_monitor)
-        expect(subject).to receive(:tar_cookbooks)
+        it "tars up the cookooks" do
+          allow(subject).to receive(:s3_upload)
+          allow(subject).to receive(:cleanup_tar)
+          allow(subject).to receive(:update_custom_cookbooks)
+          allow(subject).to receive(:launch_stack_monitor)
+          expect(subject).to receive(:tar_cookbooks)
 
-        subject.execute
-      end
+          subject.execute(:"bucket-name" => bucket_name)
+        end
 
-      it "uploads the cookbooks to s3" do
-        allow(subject).to receive(:tar_cookbooks)
-        allow(subject).to receive(:cleanup_tar)
-        allow(subject).to receive(:update_custom_cookbooks)
-        allow(subject).to receive(:launch_stack_monitor)
-        expect(subject).to receive(:s3_upload)
+        it "uploads the cookbooks to s3" do
+          allow(subject).to receive(:tar_cookbooks)
+          allow(subject).to receive(:cleanup_tar)
+          allow(subject).to receive(:update_custom_cookbooks)
+          allow(subject).to receive(:launch_stack_monitor)
+          expect(subject).to receive(:s3_upload)
 
-        subject.execute
-      end
+          subject.execute(:"bucket-name" => bucket_name)
+        end
 
-      it "cleans up the tarball created to upload to s3" do
-        allow(subject).to receive(:tar_cookbooks)
-        allow(subject).to receive(:s3_upload)
-        allow(subject).to receive(:update_custom_cookbooks)
-        allow(subject).to receive(:launch_stack_monitor)
-        expect(subject).to receive(:cleanup_tar)
+        it "cleans up the tarball created to upload to s3" do
+          allow(subject).to receive(:tar_cookbooks)
+          allow(subject).to receive(:s3_upload)
+          allow(subject).to receive(:update_custom_cookbooks)
+          allow(subject).to receive(:launch_stack_monitor)
+          expect(subject).to receive(:cleanup_tar)
 
-        subject.execute
+          subject.execute(:"bucket-name" => bucket_name)
+        end
       end
 
       it "creates a new update_custom_cookbooks and opens stack monitor" do
