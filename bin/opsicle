@@ -123,7 +123,7 @@ command 'chef-update' do |c|
     :desc => "Path to the directory of chef cookbooks to be uploaded to s3",
     :default_value => "cookbooks"
   c.flag [:"bucket-name"],
-    :desc => "The S3 bucket name to upload the cookbooks to"
+    :desc => "The S3 bucket name to upload the cookbooks to (required for opsicle to perform an upload to S3)"
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
 
