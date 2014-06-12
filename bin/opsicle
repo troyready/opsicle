@@ -57,6 +57,8 @@ end
 desc "SSH access to instances in the given environment stack"
 arg_name '<environment>'
 command :ssh do |c|
+  c.flag [:o, :"ssh-opts"], :desc => "SSH command line options.", :must_match => '/"[^"]+"/'
+  c.flag [:c, :"ssh-cmd"], :desc => "Command to pass to SSH", :must_match => '/"[^"]+"/'
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
     Opsicle::SSH.new(args.first).execute global_options.merge(options)

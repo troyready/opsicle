@@ -18,8 +18,11 @@ module Opsicle
       end
 
       instance_ip = instances[choice-1][:elastic_ip] || instances[choice-1][:public_ip]
+      ssh_command = " \"#{options[:"ssh-cmd"].gsub(/'/){ %q(\') }}\"" if options[:"ssh-cmd"] #escape single quotes
+      ssh_options = "#{options[:"ssh-opts"]} " if options[:"ssh-opts"]
 
-      command = "ssh #{ssh_username}@#{instance_ip}"
+      command = "ssh #{ssh_options}#{ssh_username}@#{instance_ip}#{ssh_command}"
+
       Output.say_verbose "Executing shell command: #{command}"
       system(command)
     end

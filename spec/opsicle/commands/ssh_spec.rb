@@ -57,6 +57,17 @@ module Opsicle
         expect(subject).not_to receive(:ask)
         subject.execute
       end
+
+      it "executes ssh with ssh options and command" do
+        allow(subject).to receive(:instances) {[
+                                    { hostname: "host1", elastic_ip: "123.123.123.123" },
+                                    { hostname: "host2", elastic_ip: "789.789.789.789" }
+                                  ]}
+
+        expect(subject).to receive(:system).with("ssh -p 234 mrderpyman2014@789.789.789.789 \"cd /srv/www\"")
+        subject.execute({ :"ssh-opts" => '-p 234', :"ssh-cmd" => 'cd /srv/www'})
+      end
+
     end
 
     context "#client" do
