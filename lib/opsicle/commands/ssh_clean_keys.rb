@@ -10,17 +10,15 @@ module Opsicle
       instances.each do |instance|
         # As a side note, maybe always connecting to the instance ip
         # (NOT the elastic ip) would bypass this issue
+        host_keys = [:elastic_ip, :public_ip, :public_dns,
+                     :private_ip, :private_dns]
+        hosts = host_keys.map{ |key| instance[key] }
+        hosts = hosts.reject{ |i| i.nil? }
+        #hosts = hosts.find_all{ |i| i }
 
-        # Need a way to lookup the elastic publid dns name of the elastic ip
-        ip_keys = [:elastic_ip, :public_dns, :public_ip,
-                  :private_dns, :private_ip]
-        ips = ip_keys.map{ |key| instance[key] }
-        ips = ips.reject{ |i| i.nil? }
-        #ips = ips.find_all{ |i| i }
-
-        ips.each do |ip|
+        hosts.uniq.each do |host|
           # Is this properly escaped against expansion?
-          command = "ssh-keygen -R #{ip}"
+          command = "ssh-keygen -R #{host}"
           Output.say_verbose "Executing: #{command}"
           system(command)
         end
