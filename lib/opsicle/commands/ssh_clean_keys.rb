@@ -8,8 +8,7 @@ module Opsicle
 
     def execute(options={})
       instances.each do |instance|
-        # As a side note, maybe always connecting to the instance ip
-        # (NOT the elastic ip) would bypass this issue
+        # Fun note: public_dns will be for the elastic ip (if elastic_ip?)
         host_keys = [:elastic_ip, :public_ip, :public_dns,
                      :private_ip, :private_dns]
         hosts = host_keys.map{ |key| instance[key] }
