@@ -9,12 +9,9 @@ module Opsicle
     def execute(options={})
       instances.each do |instance|
         # Fun note: public_dns will be for the elastic ip (if elastic_ip?)
-        host_keys = [:elastic_ip, :public_ip, :public_dns,
-                     :private_ip, :private_dns]
+        host_keys = [:elastic_ip, :public_ip, :public_dns]
         hosts = host_keys.map { |key| instance[key] }
         hosts = hosts.reject { |i| i.nil? }
-        #hosts = hosts.find_all { |i| i }
-
         hosts.uniq.each do |host|
           # Is this properly escaped against expansion?
           command = "ssh-keygen -R #{host}"
