@@ -5,10 +5,10 @@ module Opsicle
   describe ExecuteRecipes do
     subject { ExecuteRecipes.new('derp') }
     let(:recipes) { ['herp'] }
+    let(:client) { double }
+    let(:monitor) { double(:start => nil) }
 
     context "#execute" do
-      let(:client) { double }
-      let(:monitor) { double(:start => nil) }
       before do
         allow(Client).to receive(:new).with('derp').and_return(client)
         allow(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {}).and_return({deployment_id: 'derp'})
@@ -64,6 +64,47 @@ module Opsicle
       it "generates a new aws client from the given configs" do
         expect(Client).to receive(:new).with('derp')
         subject.client
+      end
+    end
+
+    context "#get_layer_ids" do
+      let(:response) {{ :layers => [{:name => "aaa", :id => "111", :type => "zzz"},{:name => "bbb", :id => "222", :type => "yyy"}]}}
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+        allow(client).to receive(:api_call).with('describe_layers').and_return(response)
+      end
+
+      it "returns an array of layer_ids from the input layer (singular)" do
+        expect(subject.get_layer_ids(["aaa"])).to eq(["111"])
+      end
+
+      it "returns an array of layer_ids from the input layers (plural)" do
+        expect(subject.get_layer_ids(["aaa","bbb"])).to eq(["111","222"])
+      end
+    end
+
+    context "#get_instance_ids" do
+      let(:response) {{ :instances => [{:stack_id => "aaa", :instance_id => "111"},{:stack_id => "bbb", :instance_id => "222"}]}}
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+        allow(client).to receive(:api_call).with('describe_instances',layer_id: "aaa").and_return(response)
+      end
+
+      it "returns an array of instance_ids from the input layer_id" do
+        expect(subject.get_instance_ids("aaa")).to eq(["111","222"])
+      end
+    end
+
+    context "#instance_ids" do
+
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+        allow(subject).to receive(:get_layer_ids).and_return(["aaa","bbb"])
+        allow(subject).to receive(:get_instance_ids).and_return(["111","222"],["333","444"])
+      end
+
+      it "returns the instance ids from " do
+        expect(subject.instance_ids(["aaa"])).to eq(["111","333"])
       end
     end
 

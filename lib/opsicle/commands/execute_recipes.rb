@@ -19,10 +19,25 @@ module Opsicle
       command_args["recipes"] = options[:recipes]
 
       command_opts = {}
-      command_opts["instance_ids"] = options[:instance_ids] if options[:instance_ids]
+      if options[:instance_ids] || options[:layers]
+        command_opts["instance_ids"] = options[:instance_ids] ? options[:instance_ids] : instance_ids(options[:layers])
+      end
 
       response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
     end
+
+    def get_layer_ids(layers)
+      client.api_call('describe_layers')[:layers].map{ |s| s[:id] if layers.include?(s[:name]) }.compact 
+    end
+
+    def get_instance_ids(layer_id)
+      client.api_call('describe_instances', layer_id: layer_id)[:instances].map{ |s| s[:instance_id] }
+    end
+
+    def instance_ids(layers)
+      get_layer_ids(layers).map{ |layer_id| get_instance_ids(layer_id)[0] }
+    end
+
   end
 end
