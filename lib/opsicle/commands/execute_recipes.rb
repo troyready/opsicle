@@ -17,9 +17,8 @@ module Opsicle
       #http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/OpsWorks/Client.html#create_deployment-instance_method
       command_args = {}
       command_args["recipes"] = options[:recipes]
-
       command_opts = {}
-      command_opts["instance_ids"] = determine_instance_ids(options)
+      command_opts["instance_ids"] = determine_instance_ids(options) if options[:instance_ids] || options[:layers]
 
       response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
@@ -29,7 +28,7 @@ module Opsicle
       if options[:instance_ids]
         options[:instance_ids]
       elsif options[:layers]
-        Layer.instance_ids(client, options[:layers])
+        Opsicle::Layer.instance_ids(client, options[:layers])
       end
     end
 

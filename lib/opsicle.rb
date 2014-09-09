@@ -8,4 +8,4 @@ require "opsicle/output"
 require "opsicle/version"
 require "opsicle/commands"
 require "opsicle/monitor"
-
+require "opsicle/layer"
