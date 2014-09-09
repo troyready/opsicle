@@ -23,12 +23,15 @@ module Opsicle
     #
     # Return - An array of layer objects
     def self.get_info
-      layer_info = client.api_call('describe_layers', stack_id: @client.config.opsworks_config[:stack_id])[:layers].map do |layer|
+      get_layers.map do |layer|
         new(client, id: layer[:layer_id], name: layer[:shortname])
       end
     end
     private_class_method :get_info
 
+    def self.get_layers
+      client.api_call('describe_layers', stack_id: client.config.opsworks_config[:stack_id])[:layers]
+    end
     # Public - gets all the layer ids for the given layers
     #
     # client - a new Client
@@ -37,7 +40,7 @@ module Opsicle
     # Return - An array of instance ids belonging to the input layers
     def self.instance_ids(client, layers)
       @client = client
-      get_info.map{ |layer| layer.get_instance_ids[0] if layers.include?(layer.name) }.compact
+      get_info.map{ |layer| layer.get_instance_ids[0] if layers.include?(layer.name) }.uniq.compact
     end
 
   end

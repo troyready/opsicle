@@ -23,7 +23,7 @@ module Opsicle
       response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
     end
-
+      
     def determine_instance_ids(options)
       if options[:instance_ids]
         options[:instance_ids]
