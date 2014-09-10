@@ -5,10 +5,10 @@ module Opsicle
   describe ExecuteRecipes do
     subject { ExecuteRecipes.new('derp') }
     let(:recipes) { ['herp'] }
+    let(:client) { double }
+    let(:monitor) { double(:start => nil) }
 
     context "#execute" do
-      let(:client) { double }
-      let(:monitor) { double(:start => nil) }
       before do
         allow(Client).to receive(:new).with('derp').and_return(client)
         allow(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {}).and_return({deployment_id: 'derp'})
@@ -64,6 +64,23 @@ module Opsicle
       it "generates a new aws client from the given configs" do
         expect(Client).to receive(:new).with('derp')
         subject.client
+      end
+    end
+
+    context "#determine_instance_ids" do
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+      end
+
+      it "returns the instance_ids when passed in through options" do
+        options = {:instance_ids => ["abcdefg","1234567"]}
+        expect(subject.determine_instance_ids(options)).to eq(["abcdefg","1234567"])
+      end
+
+      it "returns the instance_ids when a layer is passed in" do
+        options = {:layers => ["main-util"]}
+        allow(Opsicle::Layer).to receive(:instance_ids).and_return(["a1b2c3"])
+        expect(subject.determine_instance_ids(options)).to eq(["a1b2c3"])
       end
     end
 
