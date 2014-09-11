@@ -54,6 +54,10 @@ module Opsicle
         allow(layer2).to receive(:get_instance_ids).and_return(["222","333"])
         expect(subject.instance_ids(client, ["aaa","bbb"])).to eq(["111","222","333"])
       end
+
+      it "returns the instances ids from only given layer names" do
+        expect(subject.instance_ids(client, ["aaa"])).to eq(["111","222"])
+      end
     end
   end
 end
