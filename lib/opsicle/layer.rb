@@ -40,7 +40,7 @@ module Opsicle
     # Return - An array of instance ids belonging to the input layers
     def self.instance_ids(client, layers)
       @client = client
-      get_info.map{ |layer| layer.get_instance_ids[0] if layers.include?(layer.name) }.uniq.compact
+      get_info.map{ |layer| layer.get_instance_ids if layers.include?(layer.name) }.flatten.compact.uniq
     end
 
   end

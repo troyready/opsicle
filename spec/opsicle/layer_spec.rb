@@ -47,12 +47,12 @@ module Opsicle
       end
 
       it "returns the instance ids from layer_names" do
-        expect(subject.instance_ids(client, ["aaa","bbb"])).to eq(["111","333"])
+        expect(subject.instance_ids(client, ["aaa","bbb"])).to eq(["111","222","333","444"])
       end
 
       it "returns the instance ids from layer_names, filters out doubles" do
-        allow(layer2).to receive(:get_instance_ids).and_return(["111","222"])
-        expect(subject.instance_ids(client, ["aaa","bbb"])).to eq(["111"])
+        allow(layer2).to receive(:get_instance_ids).and_return(["222","333"])
+        expect(subject.instance_ids(client, ["aaa","bbb"])).to eq(["111","222","333"])
       end
     end
   end
