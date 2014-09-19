@@ -1,0 +1,12 @@
+defaults:
+  deploy_cmd: gem push *.gem
+  before_deploy_cmds:
+    - sed -i -e "s/\".*/\"$(git tag | tail -1 | sed s/v//)\"/" lib/opsicle/version.rb
+    - git add  lib/opsicle/version.rb
+    - git commit -m "Version Bump" && git push
+    - gem build opsicle.gemspec
+  after_deploy_cmds:
+    - rm *.gem
+environments:
+  -
+    rubygems: {}
