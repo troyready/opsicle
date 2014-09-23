@@ -1,14 +1,20 @@
-require "opsicle/monitor/app"
-require "opsicle/monitor/panel"
-require "opsicle/monitor/subpanel"
-require "opsicle/monitor/screen"
-require "opsicle/monitor/translatable"
+require 'opsicle/client'
+require 'canis/core/util/app'
 
-require "opsicle/monitor/panels/header"
-require "opsicle/monitor/panels/deployments"
-require "opsicle/monitor/panels/instances"
-require "opsicle/monitor/panels/help"
+module Opsicle
+  class Monitor
+    def initialize(client, options={})
+    end
 
-require "opsicle/monitor/spy/dataspyable"
-require "opsicle/monitor/spy/deployments"
-require "opsicle/monitor/spy/instances"
+    def start
+      App.new do
+        @header = app_header "My App #{App::VERSION}", :text_center => "Opsicle Monitor REBORN!", :text_right =>"Some text", :color => :black, :bgcolor => :white
+
+        @status_line = status_line
+        @status_line.command {
+
+        }
+      end
+    end
+  end
+end
