@@ -6,7 +6,7 @@ require 'opsicle/version'
 Gem::Specification.new do |spec|
   spec.name          = "opsicle"
   spec.version       = Opsicle::VERSION
-  spec.authors       = ["Andy Fleener", "Nick LaMuro"]
+  spec.authors       = ["Andy Fleener", "Nick LaMuro", "Chris Arcand"]
   spec.email         = ["andrew.fleener@sportngin.com"]
   spec.description   = %q{CLI for the opsworks platform}
   spec.summary       = %q{An opsworks specific abstraction on top of the aws sdk}
