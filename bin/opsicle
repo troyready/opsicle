@@ -81,7 +81,7 @@ command 'monitor' do |c|
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
 
-    @monitor = Opsicle::Monitor::App.new(args.first, global_options.merge(options))
+    @monitor = Opsicle::Monitor.new(args.first, global_options.merge(options))
     @monitor.start
   end
 end
