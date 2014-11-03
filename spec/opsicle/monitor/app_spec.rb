@@ -20,12 +20,26 @@ describe Opsicle::Monitor::App do
     @app = Opsicle::Monitor::App.new("staging", {})
   end
 
-  it "sets status not-running" do
-    expect(@app.running).to equal(false)
-  end
+  describe "#initialize" do
 
-  it "sets status not-restarting" do
-    expect(@app.restarting).to equal(false)
+    it "sets status not-running" do
+      expect(@app.running).to equal(false)
+    end
+
+    it "sets status not-restarting" do
+      expect(@app.restarting).to equal(false)
+    end
+
+    context "when the app is montoring a deploy" do
+      before do
+        @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
+      end
+
+      it "set the deployment_id" do
+        expect(@app.deployment_id).to equal(123)
+      end
+    end
+
   end
 
   describe "#restart" do

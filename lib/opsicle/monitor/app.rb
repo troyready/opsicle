@@ -13,15 +13,17 @@ module Opsicle
 
       attr_reader :running
       attr_reader :restarting
+      attr_reader :deployment_id
 
       class << self
         attr_accessor :client
       end
 
       def initialize(environment, options)
-        @running    = false
-        @restarting = false
-        @threads    = {}
+        @running       = false
+        @restarting    = false
+        @threads       = {}
+        @deployment_id = options[:deployment_id]
 
         # Make client with correct configuration available to monitor spies
         App.client = Client.new(environment)
