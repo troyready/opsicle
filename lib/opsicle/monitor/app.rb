@@ -14,6 +14,7 @@ module Opsicle
       attr_reader :running
       attr_reader :restarting
       attr_reader :deployment_id
+      attr_reader :deploy
 
       class << self
         attr_accessor :client
@@ -27,6 +28,7 @@ module Opsicle
 
         # Make client with correct configuration available to monitor spies
         App.client = Client.new(environment)
+        @deploy = Opsicle::Deployment.new(@deployment_id, App.client) if @deployment_id
       end
 
       def start
@@ -140,6 +142,10 @@ module Opsicle
 
           sleep API_POLLING_INTERVAL
         end
+      end
+
+      def deploy_running?
+        deploy.deployment(:reload => true).running?
       end
 
       def open_opsworks_browser

@@ -1,5 +1,6 @@
 require "spec_helper"
 require "opsicle"
+require "opsicle/deployment"
 
 describe Opsicle::Monitor::App do
 
@@ -38,6 +39,10 @@ describe Opsicle::Monitor::App do
       it "set the deployment_id" do
         expect(@app.deployment_id).to equal(123)
       end
+
+      it "assigns a deploy" do
+        expect(@app.deploy).to be_an_instance_of(Opsicle::Deployment)
+      end
     end
 
   end
@@ -70,6 +75,36 @@ describe Opsicle::Monitor::App do
       expect(@screen).to receive(:panel_main=).with(:help)
 
       @app.do_command('h')
+    end
+  end
+
+  describe "#deploy_running?" do
+    before do
+      deployment = double("deployment", :running? => true)
+      @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
+      @app.instance_variable_set :@deploy, double("deploy", :deployment => deployment)
+    end
+
+    it "reloads the status" do
+      expect(@app.deploy).to receive(:deployment).with(:reload => true)
+      @app.send(:deploy_running?)
+    end
+
+    context "if the deploy is still running" do
+      it "returns true" do
+        expect(@app.send(:deploy_running?)).to be_truthy
+      end
+    end
+
+    context "if the deploy finished" do
+      before do
+        deployment = double("deployment", :running? => false)
+        @app.instance_variable_set :@deploy, double("deploy", :deployment => deployment)
+      end
+
+      it "returns false" do
+        expect(@app.send(:deploy_running?)).to be_falsey
+      end
     end
   end
 
