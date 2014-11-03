@@ -144,6 +144,12 @@ module Opsicle
         end
       end
 
+      def check_deploy_status
+        unless deploy_running?
+          deploy.deployment.failed? ? stop(DeployFailed) : stop
+        end
+      end
+
       def deploy_running?
         deploy.deployment(:reload => true).running?
       end
@@ -152,6 +158,8 @@ module Opsicle
         %x(open 'https://console.aws.amazon.com/opsworks/home?#/stack/#{App.client.config.opsworks_config[:stack_id]}')
       end
     end
-    QuitMonitor = Class.new(StandardError)
+
+    QuitMonitor  = Class.new(StandardError)
+    DeployFailed = Class.new(StandardError)
   end
 end

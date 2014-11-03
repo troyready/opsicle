@@ -133,4 +133,40 @@ describe Opsicle::Monitor::App do
     end
   end
 
+  describe "#check_deploy_status" do
+    let(:deployment) { double("deployment", :running? => true) }
+
+    before do
+      @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
+      @app.instance_variable_set :@deploy, double("deploy", :deployment => deployment)
+    end
+
+    context "if the deploy is still running" do
+      it "does not stop the monitor" do
+        expect(@app).to receive(:stop).never
+        @app.send :check_deploy_status
+      end
+    end
+
+    context "if is finished running" do
+      context "and ran successfully" do
+        let(:deployment) { double("deployment", :running? => false, :failed? => false) }
+
+        it "stops the monitor normally" do
+          expect(@app).to receive(:stop).with(no_args)
+          @app.send :check_deploy_status
+        end
+      end
+
+      context "and failed" do
+        let(:deployment) { double("deployment", :running? => false, :failed? => true) }
+
+        it "stops the monitor with an DeployFailed error" do
+          expect(@app).to receive(:stop).with(Opsicle::Monitor::DeployFailed)
+          @app.send :check_deploy_status
+        end
+      end
+    end
+  end
+
 end
