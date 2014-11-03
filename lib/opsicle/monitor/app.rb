@@ -49,6 +49,12 @@ module Opsicle
             refresh_data_loop # refresh not so frequently
           end
 
+          if @deploy
+            @threads[:check_status] ||= Thread.new do
+              refresh_deploy_status_loop # refresh not so frequently
+            end
+          end
+
           @threads.each { |tname, t| t.join }
         ensure
           cleanup
@@ -139,6 +145,19 @@ module Opsicle
           next unless @screen # HACK: only certain test scenarios?
 
           @screen.refresh_spies
+
+          sleep API_POLLING_INTERVAL
+        end
+      end
+
+      # This is an optional loop that is meant for keeping track of a deploy
+      # and exiting on compltion.  It uses it's own API call since digging down
+      # to the spies would get ugly.
+      def refresh_deploy_status_loop
+        while @running do
+          next unless @screen # HACK: only certain test scenarios?
+
+          check_deploy_status
 
           sleep API_POLLING_INTERVAL
         end
