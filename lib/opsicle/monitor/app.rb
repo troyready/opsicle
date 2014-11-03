@@ -55,12 +55,12 @@ module Opsicle
         end
       end
 
-      def stop
+      def stop(error=nil)
         @running = false
         @screen.close
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
-        raise QuitMonitor
+        raise (error || QuitMonitor)
       end
 
       def restart

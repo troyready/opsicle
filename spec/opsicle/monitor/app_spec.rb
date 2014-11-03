@@ -59,6 +59,31 @@ describe Opsicle::Monitor::App do
     end
   end
 
+  describe "#stop" do
+    before do
+      @app.instance_variable_set(:@running, true)
+      @app.instance_variable_set(:@screen, @screen)
+    end
+
+    it "sets @running to false" do
+      @app.stop rescue nil # don't care about the error here
+      expect(@app.running).to eq(false)
+    end
+
+    context "when called normally" do
+      it "raises QuitMonitor and exits safely" do
+        expect { @app.stop }.to raise_error(Opsicle::Monitor::QuitMonitor)
+      end
+    end
+
+    context "when a custom error is passed in" do
+      it "raises the custom error" do
+        MyAwesomeCustomError = Class.new(StandardError)
+        expect { @app.stop(MyAwesomeCustomError) }.to raise_error(MyAwesomeCustomError)
+      end
+    end
+  end
+
   describe "#do_command" do
     before do
       @app.instance_variable_set(:@running, true)
