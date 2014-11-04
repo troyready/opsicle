@@ -166,7 +166,7 @@ module Opsicle
 
       def check_deploy_status
         unless deploy.running?
-          deploy.failed? ? stop(DeployFailed) : stop
+          deploy.failed? ? stop(Opsicle::Errors::DeployFailed.new(deploy)) : stop
         end
       end
 
@@ -176,6 +176,5 @@ module Opsicle
     end
 
     QuitMonitor  = Class.new(StandardError)
-    DeployFailed = Class.new(StandardError)
   end
 end

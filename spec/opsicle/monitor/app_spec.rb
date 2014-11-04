@@ -133,7 +133,7 @@ describe Opsicle::Monitor::App do
         let(:deployment) { double("deployment", :[] => 'failed') }
 
         it "stops the monitor with an DeployFailed error" do
-          expect(@app).to receive(:stop).with(Opsicle::Monitor::DeployFailed)
+          expect(@app).to receive(:stop).with(Opsicle::Errors::DeployFailed)
           @app.send :check_deploy_status
         end
       end
