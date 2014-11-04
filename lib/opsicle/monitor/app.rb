@@ -4,6 +4,7 @@
 # His help in working with the Ruby curses library has been invaluable - thanks tiredpixel!
 
 require 'opsicle/client'
+require "opsicle/deployment"
 
 module Opsicle
   module Monitor

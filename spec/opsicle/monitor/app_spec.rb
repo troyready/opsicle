@@ -1,6 +1,5 @@
 require "spec_helper"
 require "opsicle"
-require "opsicle/deployment"
 
 describe Opsicle::Monitor::App do
 
