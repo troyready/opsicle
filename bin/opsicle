@@ -122,6 +122,7 @@ desc "Update the Stack Custom Chef Cookbooks"
 arg_name '<environment>'
 command 'chef-update' do |c|
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
+  c.switch [:t, :track],   :desc => "Tracks to deploy and exits when completed. Exits with non-zero if the deploy fails."
   c.flag [:path],
     :desc => "Path to the directory of chef cookbooks to be uploaded to s3",
     :default_value => "cookbooks"
