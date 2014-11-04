@@ -167,7 +167,7 @@ module Opsicle
 
       def check_deploy_status
         unless deploy.running?
-          deploy.failed? ? stop(Opsicle::Errors::DeployFailed.new(deploy)) : stop
+          deploy.failed? ? stop(Opsicle::Errors::DeployFailed.new(deploy.command)) : stop
         end
       end
 

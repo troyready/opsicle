@@ -108,6 +108,7 @@ describe Opsicle::Monitor::App do
 
     before do
       allow(deploy).to receive(:deployment).and_return(deployment)
+      allow(deploy).to receive(:command).and_return({:name => 'deploy' })
       @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
       @app.instance_variable_set :@deploy, deploy
     end
