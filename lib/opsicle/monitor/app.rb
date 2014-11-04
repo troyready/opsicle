@@ -152,7 +152,7 @@ module Opsicle
       end
 
       # This is an optional loop that is meant for keeping track of a deploy
-      # and exiting on compltion.  It uses it's own API call since digging down
+      # and exiting on completion.  It uses it's own API call since digging down
       # to the spies would get ugly.
       def refresh_deploy_status_loop
         while @running do
