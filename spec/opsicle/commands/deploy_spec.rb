@@ -22,9 +22,17 @@ module Opsicle
       it "creates a new deployment and opens stack monitor" do
         expect(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
-        expect(Monitor::App).to receive(:new)
+        expect(Monitor::App).to receive(:new).with('derp', :monitor => true)
 
         subject.execute
+      end
+
+      it "creates a new deployment that exits the stack monitor on completion" do
+        expect(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
+        expect(subject).to_not receive(:open_deploy)
+        expect(Monitor::App).to receive(:new).with('derp', :monitor => true, :deployment_id => 'derp')
+
+        subject.execute({:monitor => true, :track => true})
       end
 
       it "creates a new deployment with migrations" do

@@ -39,6 +39,7 @@ command :deploy do |c|
   c.switch [:b, :browser], :desc => "Open the OpsWorks deployments screen for this stack on deploy"
   c.switch [:g, :migrate], :desc => "Deploy with migrations"
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
+  c.switch [:t, :track],   :desc => "Tracks to deploy and exits when completed. Exits with non-zero if the deploy fails."
   c.action do |global_options, options, args|
     raise ArgumentError, 'You must specify an environment' unless args.first
     Opsicle::Deploy.new(args.first).execute global_options.merge(options)
