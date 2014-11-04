@@ -64,6 +64,7 @@ module Opsicle
 
       def stop(error=nil)
         @running = false
+        wakey_wakey
         @screen.close
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 

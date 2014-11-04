@@ -29,8 +29,15 @@ pre do |global_options, command, options, args|
 end
 
 on_error do |exception|
-  exit(0) if exception.is_a?(Opsicle::Monitor::QuitMonitor)
-  true
+  case exception
+  when Opsicle::Monitor::QuitMonitor
+    exit 0
+  when Opsicle::Errors::DeployFailed
+    Opsicle::Output.say exception.message, :error
+    false
+  else
+    true
+  end
 end
 
 desc "Deploy your current app to the given environment stack"
