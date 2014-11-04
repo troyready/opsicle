@@ -140,6 +140,7 @@ arg_name '<environment>'
 arg_name '<recipe>'
 command 'execute-recipes' do |c|
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
+  c.switch [:t, :track],   :desc => "Tracks to deploy and exits when completed. Exits with non-zero if the deploy fails."
   c.flag [:r, :recipes], :desc => 'The recipes to execute', :type => Array, :required => true
   c.flag [:i, :instance_ids], :desc => 'The specific instances to execute recipes on', :type => Array
   c.flag [:l, :layers], :desc => 'The specific layers to execute recipes on', :type => Array
