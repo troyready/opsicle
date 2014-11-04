@@ -165,13 +165,9 @@ module Opsicle
       end
 
       def check_deploy_status
-        unless deploy_running?
-          deploy.deployment.failed? ? stop(DeployFailed) : stop
+        unless deploy.running?
+          deploy.failed? ? stop(DeployFailed) : stop
         end
-      end
-
-      def deploy_running?
-        deploy.deployment(:reload => true).running?
       end
 
       def open_opsworks_browser

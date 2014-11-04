@@ -102,42 +102,14 @@ describe Opsicle::Monitor::App do
     end
   end
 
-  describe "#deploy_running?" do
-    before do
-      deployment = double("deployment", :running? => true)
-      @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
-      @app.instance_variable_set :@deploy, double("deploy", :deployment => deployment)
-    end
-
-    it "reloads the status" do
-      expect(@app.deploy).to receive(:deployment).with(:reload => true)
-      @app.send(:deploy_running?)
-    end
-
-    context "if the deploy is still running" do
-      it "returns true" do
-        expect(@app.send(:deploy_running?)).to be_truthy
-      end
-    end
-
-    context "if the deploy finished" do
-      before do
-        deployment = double("deployment", :running? => false)
-        @app.instance_variable_set :@deploy, double("deploy", :deployment => deployment)
-      end
-
-      it "returns false" do
-        expect(@app.send(:deploy_running?)).to be_falsey
-      end
-    end
-  end
-
   describe "#check_deploy_status" do
-    let(:deployment) { double("deployment", :running? => true) }
+    let(:deploy) { Opsicle::Deployment.new('derp', 'client') }
+    let(:deployment) { double("deployment", :[] => 'running') }
 
     before do
+      allow(deploy).to receive(:deployment).and_return(deployment)
       @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
-      @app.instance_variable_set :@deploy, double("deploy", :deployment => deployment)
+      @app.instance_variable_set :@deploy, deploy
     end
 
     context "if the deploy is still running" do
@@ -149,7 +121,7 @@ describe Opsicle::Monitor::App do
 
     context "if is finished running" do
       context "and ran successfully" do
-        let(:deployment) { double("deployment", :running? => false, :failed? => false) }
+        let(:deployment) { double("deployment", :[] => 'successful') }
 
         it "stops the monitor normally" do
           expect(@app).to receive(:stop).with(no_args)
@@ -158,7 +130,7 @@ describe Opsicle::Monitor::App do
       end
 
       context "and failed" do
-        let(:deployment) { double("deployment", :running? => false, :failed? => true) }
+        let(:deployment) { double("deployment", :[] => 'failed') }
 
         it "stops the monitor with an DeployFailed error" do
           expect(@app).to receive(:stop).with(Opsicle::Monitor::DeployFailed)
