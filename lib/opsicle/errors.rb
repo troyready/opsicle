@@ -12,7 +12,7 @@ module Opsicle
       def command_string
         command_string = @command ? @command[:name] : 'deploy'
 
-        if command_string == 'execute-recipes' && @command[:args]["recipes"]
+        if command_string == 'execute_recipes' && @command[:args]["recipes"]
           command_string += " (running [#{@command[:args]["recipes"].join(', ')}])"
         end
 

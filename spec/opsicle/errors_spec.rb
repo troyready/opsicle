@@ -12,20 +12,20 @@ module Opsicle
       end
 
       context "with a custom command passed in" do
-        let(:deploy) { {:name => "chef-update"} }
+        let(:deploy) { {:name => "update_custom_cookbooks"} }
         subject { DeployFailed.new(deploy) }
 
         it "updates the error message" do
-          expect(subject.message).to eq('chef-update failed!')
+          expect(subject.message).to eq('update_custom_cookbooks failed!')
         end
       end
 
-      context "with a custom command passed in" do
-        let(:deploy) { {:name => "execute-recipes", :args=>{"recipes"=>["app-configs", "deploy::default"]}} }
+      context "with an execute_recipes command passed in" do
+        let(:deploy) { {:name => "execute_recipes", :args=>{"recipes"=>["app-configs", "deploy::default"]}} }
         subject { DeployFailed.new(deploy) }
 
         it "updates the error message" do
-          expect(subject.message).to eq('execute-recipes (running [app-configs, deploy::default]) failed!')
+          expect(subject.message).to eq('execute_recipes (running [app-configs, deploy::default]) failed!')
         end
       end
 
@@ -36,21 +36,21 @@ module Opsicle
           end
         end
 
-        context "if @command is chef-update" do
-          let(:deploy) { {:name => "chef-update"} }
+        context "if @command is update_custom_cookbooks" do
+          let(:deploy) { {:name => "update_custom_cookbooks"} }
           subject { DeployFailed.new deploy }
 
-          it "returns 'chef-update'" do
-            expect(subject.command_string).to eq('chef-update')
+          it "returns 'update_custom_cookbooks'" do
+            expect(subject.command_string).to eq('update_custom_cookbooks')
           end
         end
 
-        context "if @command is execute-recipes" do
-          let(:deploy) { {:name => "execute-recipes", :args=>{"recipes"=>["app-configs", "deploy::default"]}} }
+        context "if @command is execute_recipes" do
+          let(:deploy) { {:name => "execute_recipes", :args=>{"recipes"=>["app-configs", "deploy::default"]}} }
           subject { DeployFailed.new deploy }
 
-          it "returns 'execute-recipes (running [app-configs, deploy::default])'" do
-            expect(subject.command_string).to eq('execute-recipes (running [app-configs, deploy::default])')
+          it "returns 'execute_recipes (running [app-configs, deploy::default])'" do
+            expect(subject.command_string).to eq('execute_recipes (running [app-configs, deploy::default])')
           end
         end
       end
