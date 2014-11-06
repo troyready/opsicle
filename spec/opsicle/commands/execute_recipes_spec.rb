@@ -23,9 +23,17 @@ module Opsicle
       it "creates a new execute_recipes deployment and opens stack monitor" do
         expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
-        expect(Monitor::App).to receive(:new)
+        expect(Monitor::App).to receive(:new).with('derp', monitor: true, recipes: recipes)
 
         subject.execute({ monitor: true, recipes: recipes })
+      end
+
+      it "creates a new execute_recipes deployment that exits the stack monitor on completion" do
+        expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {}).and_return({deployment_id: 'derp'})
+        expect(subject).to_not receive(:open_deploy)
+        expect(Monitor::App).to receive(:new).with('derp', monitor: true, recipes: recipes, deployment_id: 'derp')
+
+        subject.execute({monitor: true, track: true, recipes: recipes})
       end
 
       context "multiple recipes" do

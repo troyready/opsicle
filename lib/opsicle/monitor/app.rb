@@ -4,6 +4,7 @@
 # His help in working with the Ruby curses library has been invaluable - thanks tiredpixel!
 
 require 'opsicle/client'
+require "opsicle/deployment"
 
 module Opsicle
   module Monitor
@@ -13,18 +14,22 @@ module Opsicle
 
       attr_reader :running
       attr_reader :restarting
+      attr_reader :deployment_id
+      attr_reader :deploy
 
       class << self
         attr_accessor :client
       end
 
       def initialize(environment, options)
-        @running    = false
-        @restarting = false
-        @threads    = {}
+        @running       = false
+        @restarting    = false
+        @threads       = {}
+        @deployment_id = options[:deployment_id]
 
         # Make client with correct configuration available to monitor spies
         App.client = Client.new(environment)
+        @deploy = Opsicle::Deployment.new(@deployment_id, App.client) if @deployment_id
       end
 
       def start
@@ -45,18 +50,25 @@ module Opsicle
             refresh_data_loop # refresh not so frequently
           end
 
+          if @deploy
+            @threads[:check_status] ||= Thread.new do
+              refresh_deploy_status_loop # refresh not so frequently
+            end
+          end
+
           @threads.each { |tname, t| t.join }
         ensure
           cleanup
         end
       end
 
-      def stop
+      def stop(error=nil)
         @running = false
+        wakey_wakey
         @screen.close
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
-        raise QuitMonitor
+        raise (error || QuitMonitor)
       end
 
       def restart
@@ -140,10 +152,30 @@ module Opsicle
         end
       end
 
+      # This is an optional loop that is meant for keeping track of a deploy
+      # and exiting on completion.  It uses it's own API call since digging down
+      # to the spies would get ugly.
+      def refresh_deploy_status_loop
+        while @running do
+          next unless @screen # HACK: only certain test scenarios?
+
+          check_deploy_status
+
+          sleep API_POLLING_INTERVAL
+        end
+      end
+
+      def check_deploy_status
+        unless deploy.running?
+          deploy.failed? ? stop(Opsicle::Errors::DeployFailed.new(deploy.command)) : stop
+        end
+      end
+
       def open_opsworks_browser
         %x(open 'https://console.aws.amazon.com/opsworks/home?#/stack/#{App.client.config.opsworks_config[:stack_id]}')
       end
     end
-    QuitMonitor = Class.new(StandardError)
+
+    QuitMonitor  = Class.new(StandardError)
   end
 end
