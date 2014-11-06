@@ -79,8 +79,55 @@ module Opsicle
 
       it "returns the instance_ids when a layer is passed in" do
         options = {:layers => ["main-util"]}
+        expect(subject).to receive(:determine_from_layers)
+        subject.determine_instance_ids(options)
+      end
+
+      it "returns an instance_id when eip is set to true" do
+        options = {:eip => true}
+        expect(subject).to receive(:determine_from_eip)
+        subject.determine_instance_ids(options)
+      end
+
+      it "returns an instance_id when an ip is passed in" do
+        options = {:ip_addresses => true}
+        expect(subject).to receive(:determine_from_ips)
+        subject.determine_instance_ids(options)
+      end
+    end
+
+    context "#determine_from_layer" do
+      let(:layers) {["main-util"]}
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+      end
+
+      it "returns the instance_ids when a layer is passed in" do
         allow(Opsicle::Layer).to receive(:instance_ids).and_return(["a1b2c3"])
-        expect(subject.determine_instance_ids(options)).to eq(["a1b2c3"])
+        expect(subject.determine_from_layers(layers)).to eq(["a1b2c3"])
+      end
+    end
+
+    context "#determine_from_ips" do
+      let(:ips) {['1.2.3.4','5.6.7.8']}
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+      end
+
+      it "returns an instance_id when an ip is passed in" do
+        allow(Opsicle::Instances).to receive(:find_by_ip).and_return([{instance_id: "a1b2c3"}, {instance_id: "1234567"}])
+        expect(subject.determine_from_ips(ips)).to eq(["a1b2c3","1234567"])
+      end
+    end
+
+    context "#determine_from_eip" do
+      before do
+        allow(Client).to receive(:new).with('derp').and_return(client)
+      end
+      it "returns an instance_id when eip is set to true" do
+        eip = true
+        allow(Opsicle::Instances).to receive(:find_by_eip).and_return([{instance_id: "a1b2c3"}, {instance_id: "1234567"}])
+        expect(subject.determine_from_eip).to eq("a1b2c3")
       end
     end
 
