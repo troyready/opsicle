@@ -6,7 +6,7 @@ module Opsicle
         open_deploy(response[:deployment_id])
       elsif options[:monitor] # Default option
         Output.say_verbose "Starting Stack Monitor..."
-        @monitor = Opsicle::Monitor::App.new(@environment, options)
+        @monitor = Opsicle::Monitor::App.new(@environment, parse_options(response, options))
         @monitor.start
       end
     end
@@ -19,6 +19,17 @@ module Opsicle
       else
         Output.say "Deploy failed. No deployment_id was received from OpsWorks", :error
       end
+    end
+
+    private
+
+    def parse_options(response, options)
+      if options[:track]
+        options.delete(:track)
+        options[:deployment_id] = response[:deployment_id]
+      end
+
+      options
     end
   end
 end

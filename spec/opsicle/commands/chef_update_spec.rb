@@ -78,6 +78,16 @@ module Opsicle
 
         subject.execute
       end
+
+      it "can exit on completion" do
+        allow(subject).to receive(:tar_cookbooks)
+        allow(subject).to receive(:s3_upload)
+        allow(subject).to receive(:cleanup_tar)
+        allow(subject).to receive(:update_custom_cookbooks).and_return({:deployment_id => 123})
+        expect(Monitor::App).to receive(:new).with('derp', :monitor => true, :deployment_id => 123)
+
+        subject.execute({:monitor => true, :track => true})
+      end
     end
 
     context "#tar_cookbooks" do
