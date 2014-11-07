@@ -15,7 +15,7 @@ module Opsicle
     end
 
     def self.find_by_ip(client, ips)
-      instances = new(client).data.reject { |instance| !instances_matching_ips(instance, ips) } 
+      instances = new(client).data.reject { |instance| instances_matching_ips(instance, ips) }
       instances.empty? ? nil : instances 
     end
 

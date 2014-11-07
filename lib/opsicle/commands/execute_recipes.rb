@@ -19,7 +19,7 @@ module Opsicle
       command_args["recipes"] = options[:recipes]
       command_opts = {}
       command_opts["instance_ids"] = determine_instance_ids(options)
-      command_opts.delete_if {|key,value| value.nil?}
+      command_opts.reject! {|key,value| value.nil?}
 
       response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
@@ -47,7 +47,7 @@ module Opsicle
 
     def determine_from_eip
       if instance = Opsicle::Instances.find_by_eip(client).first
-        instance[:instance_id] 
+        Array(instance[:instance_id])
       else
         raise NoInstanceError, "Unable to find instances with elastic IPs"
       end

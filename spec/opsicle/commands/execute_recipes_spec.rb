@@ -135,7 +135,7 @@ module Opsicle
       it "returns an instance_id when eip is set to true" do
         eip = true
         allow(Opsicle::Instances).to receive(:find_by_eip).and_return([{instance_id: "a1b2c3"}, {instance_id: "1234567"}])
-        expect(subject.determine_from_eip).to eq("a1b2c3")
+        expect(subject.determine_from_eip).to eq(["a1b2c3"])
       end
     end
 
