@@ -18,9 +18,8 @@ module Opsicle
       command_args = {}
       command_args["recipes"] = options[:recipes]
       command_opts = {}
-      unless options.values_at(:instance_ids, :layers, :ip_addresses, :eip).compact.empty?
-        command_opts["instance_ids"] = determine_instance_ids(options) 
-      end
+      command_opts["instance_ids"] = determine_instance_ids(options)
+      command_opts.delete_if {|key,value| value.nil?}
 
       response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
