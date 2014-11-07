@@ -14,21 +14,39 @@ module Opsicle
       allow_any_instance_of(subject).to receive(:data).and_return([instance1,instance2])
     end
 
+    context ".instances_matching_ips" do 
+      it "returns false if no instances have a given ip" do
+        expect(subject.send(:instances_matching_ips, instance1, ["10.0.0.4","100.0.0.4"])).to eq(true)
+      end
+
+      it "returns true if an instance hasa given ip" do
+        expect(subject.send(:instances_matching_ips, instance1, ["10.0.0.1","100.0.0.4"])).to eq(false)
+      end
+    end
+
     context ".find_by_ip" do
+      before do
+        allow(subject).to receive(:instances_matching_ips)
+      end
+
       it "returns nil if no instances have a given ip" do
-        expect(subject.find_by_ip(client, ["10.0.0.4","100.0.0.4"])).to eq(nil)
+        allow(subject).to receive(:instances_matching_ips).and_return(false)
+        expect(subject.find_by_ip(client,["10.0.0.4","100.0.0.4"])).to eq(nil)
       end
 
       it "returns an instance if an instance has a given private_ip" do
-        expect(subject.find_by_ip(client, ["10.0.0.1","100.0.0.4"])).to eq([instance1])
+        allow(subject).to receive(:instances_matching_ips).and_return(true,false)
+        expect(subject.find_by_ip(client,["10.0.0.1","100.0.0.4"])).to eq([instance1])
       end
 
       it "returns an instance if an instance has a given public_ip" do
-        expect(subject.find_by_ip(client, ["100.0.0.2","100.0.0.4"])).to eq([instance2])
+        allow(subject).to receive(:instances_matching_ips).and_return(false,true)
+        expect(subject.find_by_ip(client,["100.0.0.2","100.0.0.4"])).to eq([instance2])
       end
 
       it "returns multiple instances with a given set of ips" do
-        expect(subject.find_by_ip(client, ["100.0.0.2","200.0.0.1"])).to eq([instance1,instance2])
+        allow(subject).to receive(:instances_matching_ips).and_return(true)
+        expect(subject.find_by_ip(client,["100.0.0.2","200.0.0.1"])).to eq([instance1,instance2])
       end
     end
 
