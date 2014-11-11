@@ -1,3 +1,4 @@
+#### v0.8.0
 * One push deploys
 
   > Nick LaMuro: Chris Arcand, Andy Fleener: https://github.com/sportngin/opsicle/pull/64
