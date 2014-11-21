@@ -62,13 +62,15 @@ module Opsicle
         end
       end
 
-      def stop(error=nil)
+      def stop(options={})
+        options = { error: nil, message: "" }.merge(options)
+
         @running = false
         wakey_wakey
         @screen.close
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
-        raise (error || QuitMonitor)
+        options[:error] ? raise(options[:error]) : raise(QuitMonitor, options[:message])
       end
 
       def restart
@@ -167,7 +169,11 @@ module Opsicle
 
       def check_deploy_status
         unless deploy.running?
-          deploy.failed? ? stop(Opsicle::Errors::DeployFailed.new(deploy.command)) : stop
+          if deploy.failed?
+            stop(error: Opsicle::Errors::DeployFailed.new(deploy.command))
+          else
+            stop(message: "Deploy completed successfully")
+          end
         end
       end
 

@@ -31,6 +31,7 @@ end
 on_error do |exception|
   case exception
   when Opsicle::Monitor::QuitMonitor
+    Opsicle::Output.say exception.message
     exit 0
   when Opsicle::Errors::DeployFailed
     Opsicle::Output.say exception.message, :error
