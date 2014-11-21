@@ -70,8 +70,14 @@ describe Opsicle::Monitor::App do
     end
 
     context "when called normally" do
-      it "raises QuitMonitor and exits safely" do
-        expect { @app.stop }.to raise_error(Opsicle::Monitor::QuitMonitor)
+      it "raises QuitMonitor and exits safely without a message" do
+        expect { @app.stop }.to raise_error(Opsicle::Monitor::QuitMonitor, "")
+      end
+    end
+
+    context "when a message is passed in" do
+      it "raises QuitMonitor and exists with message" do
+        expect { @app.stop(message: "Hey!") }.to raise_error(Opsicle::Monitor::QuitMonitor, "Hey!")
       end
     end
 
