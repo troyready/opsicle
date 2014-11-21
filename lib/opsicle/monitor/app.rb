@@ -171,8 +171,10 @@ module Opsicle
         unless deploy.running?
           if deploy.failed?
             stop(error: Opsicle::Errors::DeployFailed.new(deploy.command))
-          else
+          elsif deploy.successful?
             stop(message: "Deploy completed successfully")
+          else
+            stop
           end
         end
       end
