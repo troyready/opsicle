@@ -70,15 +70,21 @@ describe Opsicle::Monitor::App do
     end
 
     context "when called normally" do
-      it "raises QuitMonitor and exits safely" do
-        expect { @app.stop }.to raise_error(Opsicle::Monitor::QuitMonitor)
+      it "raises QuitMonitor and exits safely without a message" do
+        expect { @app.stop }.to raise_error(Opsicle::Monitor::QuitMonitor, "")
+      end
+    end
+
+    context "when a message is passed in" do
+      it "raises QuitMonitor and exists with message" do
+        expect { @app.stop(message: "Hey!") }.to raise_error(Opsicle::Monitor::QuitMonitor, "Hey!")
       end
     end
 
     context "when a custom error is passed in" do
       it "raises the custom error" do
         MyAwesomeCustomError = Class.new(StandardError)
-        expect { @app.stop(MyAwesomeCustomError) }.to raise_error(MyAwesomeCustomError)
+        expect { @app.stop(error: MyAwesomeCustomError) }.to raise_error(MyAwesomeCustomError)
       end
     end
   end
@@ -125,7 +131,7 @@ describe Opsicle::Monitor::App do
         let(:deployment) { double("deployment", :[] => 'successful') }
 
         it "stops the monitor normally" do
-          expect(@app).to receive(:stop).with(no_args)
+          expect(@app).to receive(:stop).with(message: "Deploy completed successfully")
           @app.send :check_deploy_status
         end
       end
@@ -134,7 +140,7 @@ describe Opsicle::Monitor::App do
         let(:deployment) { double("deployment", :[] => 'failed') }
 
         it "stops the monitor with an DeployFailed error" do
-          expect(@app).to receive(:stop).with(Opsicle::Errors::DeployFailed)
+          expect(@app).to receive(:stop).with(error: Opsicle::Errors::DeployFailed)
           @app.send :check_deploy_status
         end
       end
