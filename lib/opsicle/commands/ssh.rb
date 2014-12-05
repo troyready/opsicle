@@ -29,8 +29,8 @@ module Opsicle
 
     def instances
       @instances ||= client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })
-                            .data[:instances]
-                            .select { |instance| instance[:status].to_s == 'online'}
+                           .data[:instances]
+                           .select { |instance| instance[:status].to_s == 'online'}
     end
 
     def ssh_username
