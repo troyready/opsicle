@@ -81,8 +81,8 @@ module Opsicle
       it "makes a describe_instances API call" do
         expect(client).to receive(:api_call).with(:describe_instances, {stack_id: "1234"})
           .and_return(api_call)
-        expect(api_call).to receive(:data).and_return(instances: {:foo => :bar})
-        expect(subject.instances).to eq({:foo => :bar})
+        expect(api_call).to receive(:data).and_return(instances: [{:name => :foo, :status => "online"},{:name => :bar, :status => "stopped"}])
+        expect(subject.instances).to eq([{:name => :foo, :status=>"online"}])
       end
     end
 
