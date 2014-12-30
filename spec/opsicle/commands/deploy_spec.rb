@@ -10,7 +10,7 @@ module Opsicle
       let(:monitor) { double(:start => nil) }
       before do
         allow(Client).to receive(:new).with('derp').and_return(client)
-        allow(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
+        allow(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
 
         allow(Monitor::App).to receive(:new).and_return(monitor)
         allow(monitor).to receive(:start)
@@ -20,7 +20,7 @@ module Opsicle
       end
 
       it "creates a new deployment and opens stack monitor" do
-        expect(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
+        expect(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to receive(:new).with('derp', :monitor => true)
 
@@ -28,7 +28,7 @@ module Opsicle
       end
 
       it "creates a new deployment that exits the stack monitor on completion" do
-        expect(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
+        expect(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to receive(:new).with('derp', :monitor => true, :deployment_id => 'derp')
 
@@ -36,15 +36,23 @@ module Opsicle
       end
 
       it "creates a new deployment with migrations" do
-        expect(client).to receive(:run_command).with('deploy', {"migrate"=>["true"]}).and_return({deployment_id: 'derp'})
+        expect(client).to receive(:run_command).with('deploy', {"migrate"=>["true"]}, {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
         subject.execute({ monitor: false, migrate: true })
       end
 
       it "creates a new deployment migrations explicitly disabled" do
-        expect(client).to receive(:run_command).with('deploy', {}).and_return({deployment_id: 'derp'})
+        expect(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
         expect(subject).to_not receive(:open_deploy)
         subject.execute({ monitor: false, migrate: false })
+      end
+
+      it "pass custom json to the deploy if provided" do
+        expect(client).to receive(:run_command).with('deploy', {}, { 'custom_json' => '{ "expire_css": true }' }).and_return({deployment_id: 'derp'})
+        expect(subject).to_not receive(:open_deploy)
+        expect(Monitor::App).to_not receive(:new)
+
+        subject.execute({ custom_json: '{ "expire_css": true }' })
       end
 
       it "opens the OpsWorks deployments screen if browser option is given" do
