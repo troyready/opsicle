@@ -18,7 +18,7 @@ module Opsicle
       command_args = {}
       command_args["migrate"] = [options[:migrate].to_s] if options[:migrate]
       command_opts = {}
-      command_opts["custom_json"] = options.delete(:custom_json) if options[:custom_json]
+      command_opts["custom_json"] = options.delete(:json) if options[:json]
       response = client.run_command('deploy', command_args, command_opts)
 
       launch_stack_monitor(response, options)

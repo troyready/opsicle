@@ -48,6 +48,7 @@ command :deploy do |c|
   c.switch [:g, :migrate], :desc => "Deploy with migrations"
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
   c.switch [:t, :track],   :desc => "Tracks to deploy and exits when completed. Exits with non-zero if the deploy fails."
+  c.flag   [:j, :json],    :desc => 'Custom json to add to the deploy', :type => String
   c.action do |global_options, options, args|
     raise ArgumentError, 'You must specify an environment' unless args.first
     Opsicle::Deploy.new(args.first).execute global_options.merge(options)
@@ -159,6 +160,7 @@ command 'execute-recipes' do |c|
   c.switch [:m, :monitor], :desc => "Run the Stack Monitor on deploy", :default_value => true
   c.switch [:e, :eip], :desc => "Executes recipes on a single instance with an elastic IP", :default_value => false
   c.switch [:t, :track],   :desc => "Tracks to deploy and exits when completed. Exits with non-zero if the deploy fails."
+  c.flag [:j, :json], :desc => 'Custom json to add to the deploy', :type => String
   c.flag [:r, :recipes], :desc => 'The recipes to execute', :type => Array, :required => true
   c.flag [:i, :instance_ids], :desc => 'The specific instances to execute recipes on', :type => Array
   c.flag [:l, :layers], :desc => 'The specific layers to execute recipes on', :type => Array

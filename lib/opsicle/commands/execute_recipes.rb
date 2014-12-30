@@ -19,7 +19,7 @@ module Opsicle
       command_args["recipes"] = options[:recipes]
       command_opts = {}
       command_opts["instance_ids"] = determine_instance_ids(options)
-      command_opts["custom_json"] = options.delete(:custom_json) if options[:custom_json]
+      command_opts["custom_json"] = options.delete(:json) if options[:json]
       command_opts.reject! {|key,value| value.nil?}
 
       response = client.run_command('execute_recipes', command_args, command_opts)

@@ -52,7 +52,7 @@ module Opsicle
         expect(subject).to_not receive(:open_deploy)
         expect(Monitor::App).to_not receive(:new)
 
-        subject.execute({ custom_json: '{ "expire_css": true }' })
+        subject.execute({ json: '{ "expire_css": true }' })
       end
 
       it "opens the OpsWorks deployments screen if browser option is given" do
