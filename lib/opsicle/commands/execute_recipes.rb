@@ -19,18 +19,19 @@ module Opsicle
       command_args["recipes"] = options[:recipes]
       command_opts = {}
       command_opts["instance_ids"] = determine_instance_ids(options)
+      command_opts["custom_json"] = options.delete(:json) if options[:json]
       command_opts.reject! {|key,value| value.nil?}
 
       response = client.run_command('execute_recipes', command_args, command_opts)
       launch_stack_monitor(response, options)
     end
-      
+
     def determine_instance_ids(options)
       if options[:instance_ids]
         options[:instance_ids]
       elsif options[:layers]
         determine_from_layers(options[:layers])
-      elsif options[:ip_addresses]    
+      elsif options[:ip_addresses]
         determine_from_ips(options[:ip_addresses])
       elsif options[:eip]
         determine_from_eip
@@ -38,7 +39,7 @@ module Opsicle
     end
 
     def determine_from_ips(ips)
-      if instances = Opsicle::Instances.find_by_ip(client, ips)  
+      if instances = Opsicle::Instances.find_by_ip(client, ips)
         instances.map { |instance| instance[:instance_id] }
       else
         raise NoInstanceError, "Unable to find instances with given IP"

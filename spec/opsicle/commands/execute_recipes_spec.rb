@@ -53,6 +53,14 @@ module Opsicle
         end
       end
 
+      context "custom_json provided" do
+        let(:custom_json) { '{ "expire_css": true }' }
+        it "creates a new execute_recipes deployment and passes along the custom json" do
+          expect(client).to receive(:run_command).with('execute_recipes', {"recipes" => ['herp']}, {"custom_json" => custom_json}).and_return({deployment_id: 'derp'})
+          subject.execute({ monitor: false, json: custom_json, recipes: recipes })
+        end
+      end
+
       it "opens the OpsWorks deployments screen if browser option is given" do
         expect(subject).to receive(:open_deploy)
         expect(Monitor::App).to_not receive(:new)
