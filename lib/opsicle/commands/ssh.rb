@@ -7,21 +7,29 @@ module Opsicle
     end
 
     def execute(options={})
+
       if instances.length == 1
         choice = 1
       else
         Output.say "Choose an Opsworks instance:"
-        instances.each_index do |x|
-          Output.say "#{x+1}) #{instances[x][:hostname]}"
+        instances.each_with_index do |instance, index|
+          Output.say "#{index+1}) #{instance[:hostname]}"
         end
         choice = Output.ask("? ", Integer) { |q| q.in = 1..instances.length }
       end
 
-      instance_ip = instances[choice-1][:elastic_ip] || instances[choice-1][:public_ip]
       ssh_command = " \"#{options[:"ssh-cmd"].gsub(/'/){ %q(\') }}\"" if options[:"ssh-cmd"] #escape single quotes
-      ssh_options = "#{options[:"ssh-opts"]} " if options[:"ssh-opts"]
+      ssh_options = options[:"ssh-opts"] ? "#{options[:"ssh-opts"]} " : ""
 
-      command = "ssh #{ssh_options}#{ssh_username}@#{instance_ip}#{ssh_command}"
+      instance = instances[choice-1]
+      if instance_ip = instance[:elastic_ip] || instance[:public_ip]
+        ssh_string = "#{ssh_username}@#{instance_ip}"
+      else
+        ssh_string = "#{ssh_username}@#{public_ips.sample} ssh #{instance[:private_ip]}"
+        ssh_options.concat('-A -t ')
+      end
+
+      command = "ssh #{ssh_options}#{ssh_string}#{ssh_command}"
 
       Output.say_verbose "Executing shell command: #{command}"
       system(command)
@@ -31,6 +39,10 @@ module Opsicle
       @instances ||= client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })
                            .data[:instances]
                            .select { |instance| instance[:status].to_s == 'online'}
+    end
+
+    def public_ips
+      instances.map{|instance| instance[:elastic_ip] || instance[:public_ip] }.compact
     end
 
     def ssh_username

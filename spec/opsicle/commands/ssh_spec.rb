@@ -68,6 +68,14 @@ module Opsicle
         subject.execute({ :"ssh-opts" => '-p 234', :"ssh-cmd" => 'cd /srv/www'})
       end
 
+      it "executes sshs through an instance with a public_ip to get to one with a private_ip" do
+        allow(subject).to receive(:instances) {[
+                            { hostname: "host1", elastic_ip: "123.123.123.123" },
+                            { hostname: "host2", private_ip: "789.789.789.789" }
+                          ]}
+        expect(subject).to receive(:system).with("ssh -A -t mrderpyman2014@123.123.123.123 ssh 789.789.789.789")
+        subject.execute
+      end
     end
 
     context "#client" do
