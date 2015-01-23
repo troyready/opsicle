@@ -68,6 +68,14 @@ module Opsicle
         subject.execute({ :"ssh-opts" => '-p 234', :"ssh-cmd" => 'cd /srv/www'})
       end
 
+      it "executes sshs through an instance with a public_ip to get to one with a private_ip" do
+        allow(subject).to receive(:instances) {[
+                            { hostname: "host1", elastic_ip: "123.123.123.123" },
+                            { hostname: "host2", private_ip: "789.789.789.789" }
+                          ]}
+        expect(subject).to receive(:system).with("ssh -A -t mrderpyman2014@123.123.123.123 ssh 789.789.789.789")
+        subject.execute
+      end
     end
 
     context "#client" do
@@ -94,5 +102,37 @@ module Opsicle
       end
     end
 
+    context "#public_ips" do
+      it "selects all EIPs and then public_ip on the stack" do
+        allow(subject).to receive(:instances) {[
+                    { hostname: "host1", elastic_ip: "123.123.123.123", public_ip: "123.345.567.789"},
+                    { hostname: "host2", public_ip: "456.456.456.456" },
+                    { hostname: "host2", private_ip: "789.789.789.789" },
+                  ]}
+        expect(subject.public_ips).to eq(["123.123.123.123","456.456.456.456"])
+      end
+    end
+
+    context "#ssh_command" do
+      before do
+        allow(subject).to receive(:ssh_username) {"mrderpyman2014"}
+        allow(subject).to receive(:instances) {[
+                    { hostname: "host1", elastic_ip: "123.123.123.123" },
+                    { hostname: "host2", private_ip: "789.789.789.789" }
+                  ]}
+      end
+      it "creates the proper ssh_command for an instance with a public/elastic ip" do
+        expect(subject.ssh_command({elastic_ip: "123.123.123.123" })).to eq("ssh mrderpyman2014@123.123.123.123")
+      end
+      it "creates the proper ssh_command for an instance with a private ip" do
+        expect(subject.ssh_command({private_ip: "789.789.789.789" })).to eq("ssh -A -t mrderpyman2014@123.123.123.123 ssh 789.789.789.789")
+      end
+      it "properly adds ssh options to the ssh_command for an isntance with a public ip" do
+        expect(subject.ssh_command({elastic_ip: "123.123.123.123" }, { :"ssh-opts" => "-c"})).to eq("ssh -c mrderpyman2014@123.123.123.123")
+      end
+      it "properly adds ssh options to the ssh_command for an isntance with a private ip" do
+        expect(subject.ssh_command({private_ip: "789.789.789.789"}, { :"ssh-opts" => "-c"} )).to eq("ssh -c -A -t mrderpyman2014@123.123.123.123 ssh 789.789.789.789")
+      end
+    end
   end
 end
