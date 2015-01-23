@@ -18,18 +18,7 @@ module Opsicle
         choice = Output.ask("? ", Integer) { |q| q.in = 1..instances.length }
       end
 
-      ssh_command = " \"#{options[:"ssh-cmd"].gsub(/'/){ %q(\') }}\"" if options[:"ssh-cmd"] #escape single quotes
-      ssh_options = options[:"ssh-opts"] ? "#{options[:"ssh-opts"]} " : ""
-
-      instance = instances[choice-1]
-      if instance_ip = instance[:elastic_ip] || instance[:public_ip]
-        ssh_string = "#{ssh_username}@#{instance_ip}"
-      else
-        ssh_string = "#{ssh_username}@#{public_ips.sample} ssh #{instance[:private_ip]}"
-        ssh_options.concat('-A -t ')
-      end
-
-      command = "ssh #{ssh_options}#{ssh_string}#{ssh_command}"
+      command = ssh_command(instances[choice-1], options)
 
       Output.say_verbose "Executing shell command: #{command}"
       system(command)
@@ -48,5 +37,19 @@ module Opsicle
     def ssh_username
       client.api_call(:describe_my_user_profile)[:user_profile][:ssh_username]
     end
+
+    def ssh_command(instance, options={})
+      ssh_command = " \"#{options[:"ssh-cmd"].gsub(/'/){ %q(\') }}\"" if options[:"ssh-cmd"] #escape single quotes
+      ssh_options = options[:"ssh-opts"] ? "#{options[:"ssh-opts"]} " : ""
+      if instance_ip = instance[:elastic_ip] || instance[:public_ip]
+        ssh_string = "#{ssh_username}@#{instance_ip}"
+      else
+        ssh_string = "#{ssh_username}@#{public_ips.sample} ssh #{instance[:private_ip]}"
+        ssh_options.concat('-A -t ')
+      end
+
+      "ssh #{ssh_options}#{ssh_string}#{ssh_command}"
+    end
+
   end
 end
