@@ -4,6 +4,7 @@
 *.rbc
 .bundle
 .config
+.idea
 coverage
 Gemfile.lock
 InstalledFiles

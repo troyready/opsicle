@@ -52,6 +52,7 @@ staging:
 production:
   aws_access_key_id: YOUR_AWS_ACCESS_KEY
   aws_secret_access_key: YOUR_AWS_SECRET_ACCESS_KEY
+  mfa_serial_number: YOUR_MFA_ID
 ```
 
 ## Using Opsicle
