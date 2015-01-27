@@ -5,7 +5,7 @@ module Opsicle
   class Config
     FOG_CONFIG_PATH = '~/.fog'
     OPSICLE_CONFIG_PATH = './.opsicle'
-
+    SESSION_DURATION = 3600
 
     attr_reader :environment
 
@@ -15,8 +15,16 @@ module Opsicle
 
     def aws_config
       return @aws_config if @aws_config
-      fog_config = load_config(File.expand_path(FOG_CONFIG_PATH))
-      @aws_config = { access_key_id: fog_config[:aws_access_key_id], secret_access_key: fog_config[:aws_secret_access_key] }
+      if fog_config[:mfa_serial_number]
+        @aws_config = get_session.credentials
+      else
+        @aws_config = { access_key_id: fog_config[:aws_access_key_id], secret_access_key: fog_config[:aws_secret_access_key] }
+      end
+    end
+
+    def fog_config
+      return @fog_config if @fog_config
+      @fog_config = load_config(File.expand_path(FOG_CONFIG_PATH))
     end
 
     def opsworks_config
@@ -33,6 +41,23 @@ module Opsicle
       raise MissingEnvironment, "Configuration for the \'#{environment}\' environment could not be found in #{file}" unless env_config != nil
 
       env_config
+    end
+
+    def get_mfa_token
+      Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
+    end
+
+    def get_session
+      return @session if @session
+      sts = AWS::STS.new(access_key_id: fog_config[:aws_access_key_id],
+                           secret_access_key: fog_config[:aws_secret_access_key])
+      @session = sts.new_session(duration: session_duration, serial_number: fog_config[:mfa_serial_number],
+                                 token_code: get_mfa_token)
+    end
+
+    def session_duration
+      fog_config = load_config(File.expand_path(FOG_CONFIG_PATH))
+      fog_config[:session_duration] || SESSION_DURATION
     end
 
     # We want all ouf our YAML loaded keys to be symbols
