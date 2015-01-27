@@ -44,7 +44,7 @@ module Opsicle
     end
 
     def get_mfa_token
-      Output.ask("Enter MFA token: ")
+      Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
     end
 
     def get_session

@@ -30,8 +30,8 @@ module Opsicle
       terminal.say "<%= color('#{msg}', 'verbose') %>" if $verbose
     end
 
-    def self.ask(*args)
-      terminal.ask(*args)
+    def self.ask(*args, &block)
+      terminal.ask(*args, &block)
     end
   end
 end
