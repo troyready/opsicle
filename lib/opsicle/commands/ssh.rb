@@ -4,6 +4,7 @@ module Opsicle
 
     def initialize(environment)
       @client = Client.new(environment)
+      @stack = Opsicle::Stack.new(@client)
     end
 
     def execute(options={})
@@ -13,7 +14,7 @@ module Opsicle
       else
         Output.say "Choose an Opsworks instance:"
         instances.each_with_index do |instance, index|
-          Output.say "#{index+1}) #{instance[:hostname]}"
+          Output.say "#{index+1}) #{instance[:hostname]} #{instance_info(instance)}"
         end
         choice = Output.ask("? ", Integer) { |q| q.in = 1..instances.length }
       end
@@ -28,6 +29,7 @@ module Opsicle
       @instances ||= client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })
                            .data[:instances]
                            .select { |instance| instance[:status].to_s == 'online'}
+                           .sort { |a,b| a[:hostname] <=> b[:hostname] }
     end
 
     def public_ips
@@ -49,6 +51,13 @@ module Opsicle
       end
 
       "ssh #{ssh_options}#{ssh_string}#{ssh_command}"
+    end
+
+    def instance_info(instance)
+      infos = []
+      infos << instance[:layer_ids].map{ |layer_id| @stack.layer_name(layer_id) } if instance[:layer_ids]
+      infos << "EIP" if instance[:elastic_ip]
+      "(#{infos.join(', ')})"
     end
 
   end

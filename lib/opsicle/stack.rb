@@ -18,5 +18,13 @@ module Opsicle
       stack_summary[:name]
     end
 
+    def layers
+      @layers ||= @client.api_call('describe_layers', stack_id: @client.config.opsworks_config[:stack_id])[:layers]
+    end
+
+    def layer_name(layer_id)
+      layers.detect{ |layer| layer[:layer_id] == layer_id }[:name]
+    end
+
   end
 end

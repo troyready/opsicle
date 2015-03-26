@@ -17,7 +17,6 @@ module Opsicle
       end
 
       it "shows a table with all of the instances for the stack from OpsWorks" do
-        expect(subject).to receive(:get_layers).and_return(layers)
         expect(subject).to receive(:get_instances).and_return(instances)
         expect(subject).to receive(:print).with(instances)
         subject.execute
