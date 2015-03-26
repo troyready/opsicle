@@ -5,9 +5,11 @@ module Opsicle
   describe SSH do
     subject { SSH.new('derp') }
     let(:client) { double(config: double(opsworks_config: {stack_id: "1234"})) }
+    let(:stack) { double(client: client) }
     let(:api_call) { double }
     before do
       allow(Client).to receive(:new).with('derp').and_return(client)
+      allow(Stack).to receive(:new).with(client).and_return(stack)
     end
 
     context "#execute" do
@@ -92,6 +94,12 @@ module Opsicle
         expect(api_call).to receive(:data).and_return(instances: [{:name => :foo, :status => "online"},{:name => :bar, :status => "stopped"}])
         expect(subject.instances).to eq([{:name => :foo, :status=>"online"}])
       end
+      it "sorts instances by hostname" do
+        expect(client).to receive(:api_call).with(:describe_instances, {stack_id: "1234"})
+          .and_return(api_call)
+        expect(api_call).to receive(:data).and_return(instances: [{:hostname => "taco", :status => "online"},{:hostname => "bar", :status => "online"}])
+        expect(subject.instances).to eq([{:hostname => "bar", :status=>"online"}, {:hostname => "taco", :status=>"online"}])
+      end
     end
 
     context "#ssh_username" do
@@ -132,6 +140,33 @@ module Opsicle
       end
       it "properly adds ssh options to the ssh_command for an isntance with a private ip" do
         expect(subject.ssh_command({private_ip: "789.789.789.789"}, { :"ssh-opts" => "-c"} )).to eq("ssh -c -A -t mrderpyman2014@123.123.123.123 ssh 789.789.789.789")
+      end
+    end
+
+    context "#instance_info" do
+      before do
+        allow(stack).to receive(:layer_name).with("1").and_return("one")
+        allow(stack).to receive(:layer_name).with("2").and_return("two")
+        allow(subject).to receive(:instances) {[
+                    { hostname: "host1", public_ip: "123.123.123.123", layer_ids: [1] },
+                    { hostname: "host2", private_ip: "789.789.789.789", layer_ids: [1,2] },
+                    { hostname: "host3", private_ip: "789.789.789.789", layer_ids: nil }
+                  ]}
+        it "should handle no layers or EIP" do
+          expect(subject.instance_info({})).to eq("()")
+        end
+        it "should list a layer" do
+          expect(subject.instance_info(layer_ids: [1])).to eq("(one)")
+        end
+        it "should list layers" do
+          expect(subject.instance_info(layer_ids: [1, 2])).to eq("(one, two)")
+        end
+        it "should list a EIP" do
+          expect(subject.instance_info(elastic_ip: "1.1.1.1")).to eq("(EIP)")
+        end
+        it "should list all info" do
+          expect(subject.instance_info(layer_ids: [1], elastic_ip: "1.1.1.1")).to eq("(one, EIP)")
+        end
       end
     end
   end

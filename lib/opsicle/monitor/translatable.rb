@@ -25,6 +25,7 @@ module Opsicle
             completed_at: "COMPLETED",
             user: "USER",
             command: "COMMAND",
+            command_args: "ARGS",
             hostname: "HOSTNAME",
             zone: "AZ",
             ip: "IP ADDRESS",

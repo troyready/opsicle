@@ -27,6 +27,7 @@ module Opsicle
               :user          => user_from_arn(deployment[:iam_user_arn]),
               :comment       => deployment[:comment],
               :command       => deployment[:command][:name],
+              :command_args  => deployment[:command][:args],
               :name          => deployment[:name],
               :args          => deployment[:args],
               :value         => deployment[:value],
