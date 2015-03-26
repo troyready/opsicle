@@ -1,4 +1,8 @@
 #### v0.12.0
+* Adding additional info to list instances, ssh and monitor.
+
+  > Brian Bergstrom: https://github.com/sportngin/opsicle/pull/75
+  
 #### v0.11.0
 * Adding MFA support.
 
