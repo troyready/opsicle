@@ -1,3 +1,7 @@
+* Adding update command
+
+  > Brian Bergstrom: https://github.com/sportngin/opsicle/pull/76
+  
 #### v0.12.0
 * Adding additional info to list instances, ssh and monitor.
 
