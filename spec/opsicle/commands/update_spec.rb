@@ -42,13 +42,13 @@ module Opsicle
     context "#print" do
       it "should print no changes without table" do
         allow(HashDiff).to receive(:diff) { [] }
-        expect(STDOUT).to receive(:puts).with("Changes: 0") { nil }
+        expect(Output).to receive(:say).with("Changes: 0") { nil }
         expect(Output).to_not receive(:terminal)
         subject.print(nil, nil)
       end
       it "should print changes with table" do
         allow(HashDiff).to receive(:diff) { [%w[- nyan 1], %w[+ cat 2],%w[~ taco 3 4]] }
-        expect(STDOUT).to receive(:puts).with("Changes: 3") { nil }
+        expect(Output).to receive(:say).with("Changes: 3") { nil }
         expect(Output).to receive_message_chain("terminal.say")
         subject.print(nil, nil)
       end
