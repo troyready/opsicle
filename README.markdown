@@ -57,7 +57,11 @@ production:
 
 ## Using Opsicle
 
-Run `opsicle help` for a full list of commands and their uses.  
+Run `opsicle help` for a full list of commands and their uses.
+
+Opsicle accepts a `--verbose` flag or the VERBOSE environment variable to show additional information as commands are run.
+Opsicle accepts a DEBUG environment variable to show additional logging such as stack traces for failed commands.
+
 Some common commands:
 
 ### Deployments
@@ -99,7 +103,14 @@ opsicle monitor staging
 This command accepts a --path argument to the directory of cookbooks to upload. It defaults to 'cookbooks'.
 It also accepts a --bucket-name for the base s3 bucket. This flag is required.
  
+### Update
+Update an OpsWorks resource like a stack, layer or app with a given set of property values.
+The values can be passed as inline JSON or as a path to a YAML file.
+Naming and value format needs to follow what is defined for the [AWS Ruby SDK](http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/OpsWorks/Client.html).
+Upon successful execution a table of the resulting changes is printed to stdout.
 
-Opsicle accepts a `--verbose` flag or the VERBOSE environment variable to show additional information as commands are run.
-
-Opsicle accepts a DEBUG environment variable to show additional logging such as stack traces for failed commands.
+For example:
+```
+opsicle --debug update staging stack -j '{"use_opsworks_security_groups":false, "custom_json":"{\"foo\":5}"}'
+opsicle --debug update staging app -y app.yml
+```

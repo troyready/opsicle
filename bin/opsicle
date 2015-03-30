@@ -2,6 +2,8 @@
 require 'rubygems'
 require 'gli'
 require 'opsicle'
+require 'json'
+require 'yaml'
 
 include GLI::App
 
@@ -178,6 +180,31 @@ command :instances do |c|
   c.action do |global_options, options, args|
     raise ArgumentError, "Environment is required" unless args.first
     Opsicle::ListInstances.new(args.first).execute global_options.merge options
+  end
+end
+
+
+desc "Update properties on a OpsWorks resource."
+arg_name '<environment> <type>'
+command 'update' do |c|
+  valid_types = %w[app elastic_ip instance layer my_user_profile rds_db_instance stack user_profile volume]
+  c.flag   [:j, :json],         :desc => 'JSON of values to update.', :type => String
+  c.flag   [:y, :yaml_file],    :desc => 'YAML file of values to update.', :type => String
+
+  c.action do |global_options, options, args|
+    raise ArgumentError, "Environment is required" unless args.first
+    raise ArgumentError, "Resource type is required" unless args[1]
+    raise ArgumentError, "Invalid type: #{args[1]}.  Valid types: #{valid_types}" unless valid_types.include?(args[1])
+    if options[:json]
+      values = JSON.parse(options[:json])
+    elsif options[:yaml_file]
+      yaml_file = File.expand_path(options[:yaml_file])
+      values = YAML.load_file(yaml_file)
+    else
+      raise ArgumentError, "Values required in JSON or YAML flag."
+    end
+
+    Opsicle::Update.new(*args).execute(values, global_options.merge(options))
   end
 end
 
