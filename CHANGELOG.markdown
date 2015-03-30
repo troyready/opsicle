@@ -1,3 +1,4 @@
+#### v0.13.0
 * Adding update command
 
   > Brian Bergstrom: https://github.com/sportngin/opsicle/pull/76
