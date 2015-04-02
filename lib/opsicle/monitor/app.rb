@@ -177,7 +177,7 @@ module Opsicle
 
       def check_deploy_status
         if deploy.running?
-          Output.say(". ") if $stdout.tty?
+          Output.say(". ") unless $stdout.tty?
         else
           if deploy.failed?
             stop(error: Opsicle::Errors::DeployFailed.new(deploy.command))
