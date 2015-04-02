@@ -1,3 +1,8 @@
+#### v0.13.1
+* No TTY compatibility for monitor
+
+  > Brian Bergstrom, Chris Arcand: Nick LaMuro: https://github.com/sportngin/opsicle/pull/78
+
 #### v0.13.0
 * Adding update command
 
