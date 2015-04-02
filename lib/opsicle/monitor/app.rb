@@ -30,7 +30,7 @@ module Opsicle
         # Make client with correct configuration available to monitor spies
         App.client = Client.new(environment)
         if @deployment_id
-          # `deploy` or `execute-recipes` command, which is no-tty compatible so these can be automated via cron, etc.
+          # `deploy`, `chef-update`, `execute-recipes` command, which is no-tty compatible so these can be automated via cron, etc.
           @deploy = Opsicle::Deployment.new(@deployment_id, App.client)
         else
           # `monitor` command, which requires a TTY.
@@ -75,7 +75,7 @@ module Opsicle
 
         @running = false
         wakey_wakey
-        @screen.close
+        @screen.close unless @screen.nil?
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
         options[:error] ? raise(options[:error]) : raise(QuitMonitor, options[:message])
@@ -167,7 +167,7 @@ module Opsicle
       # to the spies would get ugly.
       def refresh_deploy_status_loop
         while @running do
-          next unless @screen # HACK: only certain test scenarios?
+          next unless @screen || !$stdout.tty?# HACK: only certain test scenarios?
 
           check_deploy_status
 
