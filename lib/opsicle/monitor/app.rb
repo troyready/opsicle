@@ -27,27 +27,33 @@ module Opsicle
         @threads       = {}
         @deployment_id = options[:deployment_id]
 
-        # Make client with correct configuration available to monitor spies
-        App.client = Client.new(environment)
-        @deploy = Opsicle::Deployment.new(@deployment_id, App.client) if @deployment_id
+        if @deployment_id.nil?
+          raise "Monitor requires a TTY." unless $stdout.tty?
+        else
+          # Make client with correct configuration available to monitor spies
+          App.client = Client.new(environment)
+          @deploy = Opsicle::Deployment.new(@deployment_id, App.client)
+        end
       end
 
       def start
         begin
           @running = true
 
-          setup
+          if $stdout.tty?
+            setup
 
-          @threads[:command] ||= Thread.new do
-            command_loop # listen for commands
-          end
+            @threads[:command] ||= Thread.new do
+              command_loop # listen for commands
+            end
 
-          @threads[:refresh_screen] ||= Thread.new do
-            refresh_screen_loop # refresh frequently
-          end
+            @threads[:refresh_screen] ||= Thread.new do
+              refresh_screen_loop # refresh frequently
+            end
 
-          @threads[:refresh_data] ||= Thread.new do
-            refresh_data_loop # refresh not so frequently
+            @threads[:refresh_data] ||= Thread.new do
+              refresh_data_loop # refresh not so frequently
+            end
           end
 
           if @deploy
@@ -122,7 +128,6 @@ module Opsicle
 
       def refresh_screen_loop
         while @running do
-          next unless @screen # HACK: only certain test scenarios?
 
           if @restarting || @screen.missized? # signal(s) or whilst still resizing
             panel_main = @screen.panel_main
@@ -146,7 +151,6 @@ module Opsicle
       # because we don't want to spam OpWorks with API calls every second.
       def refresh_data_loop
         while @running do
-          next unless @screen # HACK: only certain test scenarios?
 
           @screen.refresh_spies
 
@@ -159,7 +163,6 @@ module Opsicle
       # to the spies would get ugly.
       def refresh_deploy_status_loop
         while @running do
-          next unless @screen # HACK: only certain test scenarios?
 
           check_deploy_status
 
@@ -168,7 +171,9 @@ module Opsicle
       end
 
       def check_deploy_status
-        unless deploy.running?
+        if deploy.running?
+          Output.say(". ")
+        else
           if deploy.failed?
             stop(error: Opsicle::Errors::DeployFailed.new(deploy.command))
           elsif deploy.successful?
