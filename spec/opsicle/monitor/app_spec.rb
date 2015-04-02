@@ -32,7 +32,7 @@ describe Opsicle::Monitor::App do
 
     it "raises error without a tty" do
       expect($stdout).to receive(:tty?) { false }
-      expect(Opsicle::Monitor::App.new("staging", {})).to raise_error(RuntimeError, "Monitor requires a TTY.")
+      expect { Opsicle::Monitor::App.new("staging", {}) }.to raise_error(RuntimeError, "Monitor requires a TTY.")
     end
 
     context "when the app is montoring a deploy" do
