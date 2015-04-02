@@ -27,12 +27,12 @@ module Opsicle
         @threads       = {}
         @deployment_id = options[:deployment_id]
 
-        if @deployment_id.nil?
-          raise "Monitor requires a TTY." unless $stdout.tty?
-        else
-          # Make client with correct configuration available to monitor spies
-          App.client = Client.new(environment)
+        # Make client with correct configuration available to monitor spies
+        App.client = Client.new(environment)
+        if @deployment_id
           @deploy = Opsicle::Deployment.new(@deployment_id, App.client)
+        else
+          raise "Monitor requires a TTY." unless $stdout.tty?
         end
       end
 
