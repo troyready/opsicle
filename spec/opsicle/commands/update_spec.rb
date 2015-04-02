@@ -49,7 +49,8 @@ module Opsicle
       it "should print changes with table" do
         allow(HashDiff).to receive(:diff) { [%w[- nyan 1], %w[+ cat 2],%w[~ taco 3 4]] }
         expect(Output).to receive(:say).with("Changes: 3") { nil }
-        expect(Output).to receive_message_chain("terminal.say")
+        allow(Output).to receive_message_chain("terminal.say")
+        allow(Output).to receive_message_chain("terminal.color")
         subject.print(nil, nil)
       end
     end
