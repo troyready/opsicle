@@ -30,8 +30,10 @@ module Opsicle
         # Make client with correct configuration available to monitor spies
         App.client = Client.new(environment)
         if @deployment_id
+          # `deploy` or `execute-recipes` command, which is no-tty compatible so these can be automated via cron, etc.
           @deploy = Opsicle::Deployment.new(@deployment_id, App.client)
         else
+          # `monitor` command, which requires a TTY.
           raise "Monitor requires a TTY." unless $stdout.tty?
         end
       end
@@ -128,6 +130,7 @@ module Opsicle
 
       def refresh_screen_loop
         while @running do
+          next unless @screen # HACK: only certain test scenarios?
 
           if @restarting || @screen.missized? # signal(s) or whilst still resizing
             panel_main = @screen.panel_main
@@ -151,6 +154,7 @@ module Opsicle
       # because we don't want to spam OpWorks with API calls every second.
       def refresh_data_loop
         while @running do
+          next unless @screen # HACK: only certain test scenarios?
 
           @screen.refresh_spies
 
@@ -163,6 +167,7 @@ module Opsicle
       # to the spies would get ugly.
       def refresh_deploy_status_loop
         while @running do
+          next unless @screen # HACK: only certain test scenarios?
 
           check_deploy_status
 
@@ -172,7 +177,7 @@ module Opsicle
 
       def check_deploy_status
         if deploy.running?
-          Output.say(". ")
+          Output.say(". ") if $stdout.tty?
         else
           if deploy.failed?
             stop(error: Opsicle::Errors::DeployFailed.new(deploy.command))
