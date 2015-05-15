@@ -1,5 +1,6 @@
 require 'yaml'
 require 'aws-sdk'
+require 'singleton'
 
 module Opsicle
   class Config
@@ -7,11 +8,9 @@ module Opsicle
     OPSICLE_CONFIG_PATH = './.opsicle'
     SESSION_DURATION = 3600
 
-    attr_reader :environment
+    include ::Singleton
 
-    def initialize(environment)
-      @environment = environment.to_sym
-    end
+    attr_reader :environment
 
     def aws_config
       return @aws_config if @aws_config
@@ -31,14 +30,16 @@ module Opsicle
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
-    def configure_aws!
+    def configure_aws!(environment)
+      return if environment == @environment
+      @environment = environment.to_sym
       AWS.config(aws_config)
     end
 
     def load_config(file)
       raise MissingConfig, "Missing configuration file: #{file}  Run 'opsicle help'" unless File.exist?(file)
       env_config = symbolize_keys(YAML.load_file(file))[environment] rescue {}
-      raise MissingEnvironment, "Configuration for the \'#{environment}\' environment could not be found in #{file}" unless env_config != nil
+      raise MissingEnvironment, "Configuration for the '#{environment}' environment could not be found in #{file}" unless env_config != nil
 
       env_config
     end
