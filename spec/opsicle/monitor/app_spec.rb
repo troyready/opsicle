@@ -30,6 +30,11 @@ describe Opsicle::Monitor::App do
       expect(@app.restarting).to equal(false)
     end
 
+    it "raises error without a tty" do
+      expect($stdout).to receive(:tty?) { false }
+      expect { Opsicle::Monitor::App.new("staging", {}) }.to raise_error(RuntimeError, "Monitor requires a TTY.")
+    end
+
     context "when the app is montoring a deploy" do
       before do
         @app = Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
@@ -41,6 +46,11 @@ describe Opsicle::Monitor::App do
 
       it "assigns a deploy" do
         expect(@app.deploy).to be_an_instance_of(Opsicle::Deployment)
+      end
+
+      it "works without a tty for a deployment" do
+        allow($stdout).to receive(:tty?) { false }
+        Opsicle::Monitor::App.new("staging", {:deployment_id => 123})
       end
     end
 

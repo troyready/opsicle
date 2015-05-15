@@ -7,28 +7,9 @@ A gem bringing the glory of OpsWorks to your command line.
 ## Installation
 Add this line to your project's Gemfile:
 
-**For Ruby >=2.1.0**
-
-```ruby
-gem 'opsicle'
-gem 'curses'
-```
-
-**For Ruby <2.1.0, 1.9.3**
-
 ```ruby
 gem 'opsicle'
 ```
-
-(Alternatively, `gem 'opsicle'; gem 'curses' unless RUBY_VERSION < "2.1.0"`)
-
-**Why the extra `curses` gem for Ruby 2.1.0+?**  
-Opsicle uses [curses](http://en.wikipedia.org/wiki/Curses_(programming_library)).
-Ruby's library to interface with curses was [removed from stdlib in Ruby 2.1.0](https://bugs.ruby-lang.org/issues/8584).
-[The new curses gem](https://github.com/ruby/curses) is not backwards compatible, so in an effort to keep this gem
-friendly with all current Ruby versions we don't list it as a dependency in Opsicle's gemspec - doing so would cause
-errors for Ruby 1.9.3 users.
-Ruby >=2.1.0 will likely be enforced sometime in 2014; [certainly by February 2015](https://www.ruby-lang.org/en/news/2014/01/10/ruby-1-9-3-will-end-on-2015/).
 
 ### Set up an Application to use opsicle
 
@@ -57,7 +38,11 @@ production:
 
 ## Using Opsicle
 
-Run `opsicle help` for a full list of commands and their uses.  
+Run `opsicle help` for a full list of commands and their uses.
+
+Opsicle accepts a `--verbose` flag or the VERBOSE environment variable to show additional information as commands are run.
+Opsicle accepts a DEBUG environment variable to show additional logging such as stack traces for failed commands.
+
 Some common commands:
 
 ### Deployments
@@ -99,7 +84,14 @@ opsicle monitor staging
 This command accepts a --path argument to the directory of cookbooks to upload. It defaults to 'cookbooks'.
 It also accepts a --bucket-name for the base s3 bucket. This flag is required.
  
+### Update
+Update an OpsWorks resource like a stack, layer or app with a given set of property values.
+The values can be passed as inline JSON or as a path to a YAML file.
+Naming and value format needs to follow what is defined for the [AWS Ruby SDK](http://docs.aws.amazon.com/AWSRubySDK/latest/AWS/OpsWorks/Client.html).
+Upon successful execution a table of the resulting changes is printed to stdout.
 
-Opsicle accepts a `--verbose` flag or the VERBOSE environment variable to show additional information as commands are run.
-
-Opsicle accepts a DEBUG environment variable to show additional logging such as stack traces for failed commands.
+For example:
+```
+opsicle --debug update staging stack -j '{"use_opsworks_security_groups":false, "custom_json":"{\"foo\":5}"}'
+opsicle --debug update staging app -y app.yml
+```

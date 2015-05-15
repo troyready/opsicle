@@ -15,14 +15,21 @@ module Opsicle
           :verbose => [:bold, :magenta],
           :debug => [:bold, :cyan],
           :success => [:bold, :green],
+          :addition => [:bold, :green],
+          :removal => [:bold, :red],
+          :modification => [:bold, :yellow],
       )
     end
 
     def self.say(msg, log_style=:normal)
+      terminal.say format(msg, log_style)
+    end
+
+    def self.format(msg, log_style=:normal)
       if $color
-        terminal.say "<%= color('#{msg}', '#{log_style}') %>"
+        terminal.color(msg.to_s, log_style)
       else
-        terminal.say msg
+        msg
       end
     end
 

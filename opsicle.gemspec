@@ -19,11 +19,12 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "aws-sdk", "~> 1.30"
-  spec.add_dependency "nokogiri", "~> 1.6.3.1"
   spec.add_dependency "gli", "~> 2.9"
   spec.add_dependency "highline", "~> 1.6"
   spec.add_dependency "terminal-table", "~> 1.4"
   spec.add_dependency "minitar", "~> 0.5"
+  spec.add_dependency "hashdiff", "~> 0.2"
+  spec.add_dependency "curses", "~> 1.0"
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake", "~> 10.1"

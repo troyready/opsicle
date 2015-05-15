@@ -22,10 +22,11 @@ module Opsicle
               :hostname => instance[:hostname],
               :status => instance[:status],
               :zone => instance[:availability_zone],
-              :ip => instance[:elastic_ip] || instance[:public_ip]
+              :ip => Opsicle::Instances::pretty_ip(instance)
             }
           end
 
+          h.sort! { |a,b| a[:hostname] <=> b[:hostname] }
           @data = h
         end
 

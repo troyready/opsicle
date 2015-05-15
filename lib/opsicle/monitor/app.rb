@@ -29,25 +29,33 @@ module Opsicle
 
         # Make client with correct configuration available to monitor spies
         App.client = Client.new(environment)
-        @deploy = Opsicle::Deployment.new(@deployment_id, App.client) if @deployment_id
+        if @deployment_id
+          # `deploy`, `chef-update`, `execute-recipes` command, which is no-tty compatible so these can be automated via cron, etc.
+          @deploy = Opsicle::Deployment.new(@deployment_id, App.client)
+        else
+          # `monitor` command, which requires a TTY.
+          raise "Monitor requires a TTY." unless $stdout.tty?
+        end
       end
 
       def start
         begin
           @running = true
 
-          setup
+          if $stdout.tty?
+            setup
 
-          @threads[:command] ||= Thread.new do
-            command_loop # listen for commands
-          end
+            @threads[:command] ||= Thread.new do
+              command_loop # listen for commands
+            end
 
-          @threads[:refresh_screen] ||= Thread.new do
-            refresh_screen_loop # refresh frequently
-          end
+            @threads[:refresh_screen] ||= Thread.new do
+              refresh_screen_loop # refresh frequently
+            end
 
-          @threads[:refresh_data] ||= Thread.new do
-            refresh_data_loop # refresh not so frequently
+            @threads[:refresh_data] ||= Thread.new do
+              refresh_data_loop # refresh not so frequently
+            end
           end
 
           if @deploy
@@ -67,7 +75,7 @@ module Opsicle
 
         @running = false
         wakey_wakey
-        @screen.close
+        @screen.close unless @screen.nil?
         @screen = nil # Ruby curses lib doesn't have closed?(), so we set to nil, just in case
 
         options[:error] ? raise(options[:error]) : raise(QuitMonitor, options[:message])
@@ -159,7 +167,7 @@ module Opsicle
       # to the spies would get ugly.
       def refresh_deploy_status_loop
         while @running do
-          next unless @screen # HACK: only certain test scenarios?
+          next unless @screen || !$stdout.tty?# HACK: only certain test scenarios?
 
           check_deploy_status
 
@@ -168,7 +176,9 @@ module Opsicle
       end
 
       def check_deploy_status
-        unless deploy.running?
+        if deploy.running?
+          Output.say(". ") unless $stdout.tty?
+        else
           if deploy.failed?
             stop(error: Opsicle::Errors::DeployFailed.new(deploy.command))
           elsif deploy.successful?
