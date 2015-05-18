@@ -1,3 +1,5 @@
+require "opsicle/user_profile"
+
 module Opsicle
   class SSH
     attr_reader :client
@@ -5,6 +7,7 @@ module Opsicle
     def initialize(environment)
       @client = Client.new(environment)
       @stack = Opsicle::Stack.new(@client)
+      @user_profile = Opsicle::UserProfile.new(@client)
     end
 
     def execute(options={})
@@ -37,7 +40,7 @@ module Opsicle
     end
 
     def ssh_username
-      client.api_call(:describe_my_user_profile)[:user_profile][:ssh_username]
+      @user_profile.ssh_username
     end
 
     def ssh_command(instance, options={})
