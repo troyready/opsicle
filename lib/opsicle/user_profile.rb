@@ -25,7 +25,6 @@ module Opsicle
     def attributes
       @attributes ||= client.api_call(:describe_my_user_profile)[:user_profile]
     end
-    private :attributes
 
   end
 end
