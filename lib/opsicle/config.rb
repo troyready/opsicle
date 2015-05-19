@@ -8,9 +8,11 @@ module Opsicle
     OPSICLE_CONFIG_PATH = './.opsicle'
     SESSION_DURATION = 3600
 
-    include ::Singleton
-
     attr_reader :environment
+
+    def self.instance
+      @instance ||= new
+    end
 
     def aws_config
       return @aws_config if @aws_config
