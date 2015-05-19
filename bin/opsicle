@@ -212,6 +212,7 @@ desc "Display IAM user profile information as JSON."
 arg_name '<environment>'
 command 'user-profile-info' do |c|
   c.action do |global_options, options, args|
+    $color = false
     raise ArgumentError, "Environment is required" unless (environment = args.first)
     Opsicle::UserProfileInfo.new(environment).execute
   end
