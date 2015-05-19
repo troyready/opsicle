@@ -6,10 +6,12 @@ module Opsicle
     subject { SSH.new('derp') }
     let(:client) { double(config: double(opsworks_config: {stack_id: "1234"})) }
     let(:stack) { double(client: client) }
+    let(:user_profile) { double }
     let(:api_call) { double }
     before do
       allow(Client).to receive(:new).with('derp').and_return(client)
       allow(Stack).to receive(:new).with(client).and_return(stack)
+      allow(UserProfile).to receive(:new).with(client).and_return(user_profile)
     end
 
     context "#execute" do
@@ -104,8 +106,7 @@ module Opsicle
 
     context "#ssh_username" do
       it "makes a describe_my_user_profile API call" do
-        allow(client).to receive(:api_call).with(:describe_my_user_profile)
-          .and_return({user_profile: {:ssh_username => "captkirk01"}})
+        allow(user_profile).to receive(:ssh_username).and_return("captkirk01")
         expect(subject.ssh_username).to eq("captkirk01")
       end
     end
