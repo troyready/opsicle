@@ -1,6 +1,7 @@
 require 'opsicle/client'
 
 require "opsicle/commands/deploy"
+require "opsicle/commands/chef_log"
 require "opsicle/commands/chef_update"
 require "opsicle/commands/execute_recipes"
 require "opsicle/commands/list"

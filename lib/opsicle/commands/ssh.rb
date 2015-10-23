@@ -11,7 +11,20 @@ module Opsicle
     end
 
     def execute(options={})
+      instance = choose_instance(options[:hostname])
+      command = ssh_command(instance, options)
 
+      Output.say_verbose "Executing shell command: #{command}"
+      system(command)
+    end
+
+    def choose_instance(hostname=nil)
+      if hostname
+        instances.each do |instance|
+          return instance if instance[:hostname] == hostname
+        end
+        raise ArgumentError("Hostname #{hostname} not found.")
+      end
       if instances.length == 1
         choice = 1
       else
@@ -21,11 +34,7 @@ module Opsicle
         end
         choice = Output.ask("? ", Integer) { |q| q.in = 1..instances.length }
       end
-
-      command = ssh_command(instances[choice-1], options)
-
-      Output.say_verbose "Executing shell command: #{command}"
-      system(command)
+      instances[choice-1]
     end
 
     def instances
