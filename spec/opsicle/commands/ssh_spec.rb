@@ -72,13 +72,25 @@ module Opsicle
         subject.execute({ :"ssh-opts" => '-p 234', :"ssh-cmd" => 'cd /srv/www'})
       end
 
-      it "executes sshs through an instance with a public_ip to get to one with a private_ip" do
+      it "executes ssh through an instance with a public_ip to get to one with a private_ip" do
         allow(subject).to receive(:instances) {[
                             { hostname: "host1", elastic_ip: "123.123.123.123" },
                             { hostname: "host2", private_ip: "789.789.789.789" }
                           ]}
         expect(subject).to receive(:system).with("ssh -A -t mrderpyman2014@123.123.123.123 ssh 789.789.789.789")
         subject.execute
+      end
+
+      context "when internal_ssh_only is enabled" do
+        let(:client) { double(config: double(opsworks_config: {stack_id: "1234", internal_ssh_only: true})) }
+        it "ssh to a private_ip " do
+          allow(subject).to receive(:instances) {[
+                              { hostname: "host1", elastic_ip: "123.123.123.123", private_ip: "10.10.10.10"}
+                            ]}
+          expect(subject).to receive(:system).with("ssh mrderpyman2014@10.10.10.10")
+          expect(Output).to receive(:say).with("This stack requires a private connection, only using internal IPs.")
+          subject.execute
+        end
       end
     end
 
@@ -108,6 +120,26 @@ module Opsicle
       it "makes a describe_my_user_profile API call" do
         allow(user_profile).to receive(:ssh_username).and_return("captkirk01")
         expect(subject.ssh_username).to eq("captkirk01")
+      end
+    end
+
+    context "#ssh_ip" do
+      let(:instance) { { hostname: "host1", elastic_ip: "123.123.123.123", public_ip: "123.345.567.789", private_ip: "10.10.10.10" } }
+      context "when internal_ssh_only is enabled" do
+        let(:client) { double(config: double(opsworks_config: {stack_id: "1234", internal_ssh_only: true})) }
+        it "returns an internal IP" do
+          expect(Output).to receive(:say).with("This stack requires a private connection, only using internal IPs.")
+          expect(subject.ssh_ip(instance)).to eq("10.10.10.10")
+        end
+      end
+      context "when internal_ssh_only is not enabled" do
+        it "returns elastic IP if it is present" do
+          expect(subject.ssh_ip(instance)).to eq("123.123.123.123")
+        end
+        it "returns a public IP if there is no elastic ip" do
+          instance.delete(:elastic_ip)
+          expect(subject.ssh_ip(instance)).to eq("123.345.567.789")
+        end
       end
     end
 

@@ -43,10 +43,19 @@ module Opsicle
       @user_profile.ssh_username
     end
 
+    def ssh_ip(instance)
+      if client.config.opsworks_config[:internal_ssh_only]
+        Output.say "This stack requires a private connection, only using internal IPs."
+        instance[:private_ip]
+      else
+        instance[:elastic_ip] || instance[:public_ip]
+      end
+    end
+
     def ssh_command(instance, options={})
       ssh_command = " \"#{options[:"ssh-cmd"].gsub(/'/){ %q(\') }}\"" if options[:"ssh-cmd"] #escape single quotes
       ssh_options = options[:"ssh-opts"] ? "#{options[:"ssh-opts"]} " : ""
-      if instance_ip = instance[:elastic_ip] || instance[:public_ip]
+      if instance_ip = ssh_ip(instance)
         ssh_string = "#{ssh_username}@#{instance_ip}"
       else
         ssh_string = "#{ssh_username}@#{public_ips.sample} ssh #{instance[:private_ip]}"
