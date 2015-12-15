@@ -27,8 +27,15 @@ module Opsicle
       "https://console.aws.amazon.com/opsworks/home?#/stack/#{@config.opsworks_config[:stack_id]}"
     end
 
+    def stack_config
+      {
+        stack_id: config.opsworks_config[:stack_id],
+        app_id: config.opsworks_config[:app_id]
+      }
+    end
+
     def command_options(command, command_args={}, options={})
-      config.opsworks_config.merge(options).merge({ command: { name: command, args: command_args } })
+      stack_config.merge(options).merge({ command: { name: command, args: command_args } })
     end
     private :command_options
 
