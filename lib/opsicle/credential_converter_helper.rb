@@ -1,5 +1,5 @@
 module Opsicle
-  class CredentialConverterHelper
+  module CredentialConverterHelper
     def convert_fog_to_aws
       # open/make new credentials file, read, and gather the groups of aws credentials already in file
       cred_path = File.expand_path("~/.aws/credentials")
