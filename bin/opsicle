@@ -43,6 +43,14 @@ on_error do |exception|
   end
 end
 
+desc "Convert the ~/.fog file to a ~/.aws/credentials file"
+command 'legacy-credential-converter' do |c|
+  c.action do |args|
+    converter = Opsicle::LegacyCredentialConverter.new
+    converter.execute
+  end
+end
+
 desc "Deploy your current app to the given environment stack"
 arg_name '<environment>'
 command :deploy do |c|
