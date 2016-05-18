@@ -34,7 +34,7 @@ module Opsicle
 
       context "#configure_aws!" do
         it "should load the config into the AWS module" do
-          expect(AWS).to receive(:config).with(hash_including(access_key_id: 'key', secret_access_key: 'secret'))
+          expect(subject.aws_config).to include(access_key_id: 'key', secret_access_key: 'secret')
           subject.configure_aws!
         end
       end
@@ -52,14 +52,13 @@ module Opsicle
         mock_credentials = { access_key_id: 'key', secret_access_key: 'secret', session_token: 'cats' }
         allow(mock_session).to receive(:credentials).and_return(mock_credentials)
         allow(mock_sts).to receive(:new_session).and_return(mock_session)
-        allow(AWS::STS).to receive(:new).and_return(mock_sts)
+        allow(Aws::STS).to receive(:new).and_return(mock_sts)
         allow(Output).to receive(:ask).and_return(123456)
       end
 
       context "#configure_aws!" do
         it "should load the config into the AWS module" do
-          expect(AWS).to receive(:config).with(hash_including(access_key_id: 'key', secret_access_key: 'secret',
-                                               session_token: 'cats'))
+          expect(subject.aws_config).to include(access_key_id: 'key', secret_access_key: 'secret', session_token: 'cats')
           subject.configure_aws!
         end
       end

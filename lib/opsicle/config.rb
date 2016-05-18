@@ -32,7 +32,8 @@ module Opsicle
     end
 
     def configure_aws!
-      AWS.config(aws_config)
+      # we want this to now be a vanilla ruby hash, not a method
+      Aws.config[:credentials] = @aws_config
     end
 
     def load_config(file)
@@ -49,8 +50,9 @@ module Opsicle
 
     def get_session
       return @session if @session
-      sts = AWS::STS.new(access_key_id: fog_config[:aws_access_key_id],
-                           secret_access_key: fog_config[:aws_secret_access_key])
+      credentials = {access_key_id: fog_config[:aws_access_key_id],
+                     secret_access_key: fog_config[:aws_secret_access_key]}
+      sts = Aws::STS::Client.new(credentials: credentials, region: 'us-east-1')
       @session = sts.new_session(duration: session_duration, serial_number: fog_config[:mfa_serial_number],
                                  token_code: get_mfa_token)
     end

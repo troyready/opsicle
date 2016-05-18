@@ -9,8 +9,8 @@ module Opsicle
     def initialize(environment)
       @config = Config.new(environment)
       @config.configure_aws!
-      @opsworks = AWS::OpsWorks.new.client
-      @s3 = AWS::S3.new
+      @opsworks = Aws::OpsWorks::Client.new
+      @s3 = Aws::S3::Client.new
     end
 
     def run_command(command, command_args={}, options={})
