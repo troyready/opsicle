@@ -11,7 +11,8 @@ module Opsicle
       allow(config).to receive(:opsworks_config).and_return({ stack_id: 'stack', app_id: 'app', something_else: 'true' })
       allow(ow_stub).to receive(:client).and_return(aws_client)
       allow(Config).to receive(:new).and_return(config)
-      allow(Aws::OpsWorks).to receive(:new).and_return(ow_stub)
+      allow(Aws::OpsWorks::Client).to receive(:new).and_return(ow_stub)
+      allow(Aws::S3::Client).to receive(:new).and_return(ow_stub)
     end
 
     context "#run_command" do
