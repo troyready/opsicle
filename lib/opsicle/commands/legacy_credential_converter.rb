@@ -4,11 +4,10 @@ module Opsicle
   class LegacyCredentialConverter
     include CredentialConverterHelper
 
-    def initialize(environment)
-      @environment = environment
+    def initialize
     end
 
-    def execute(options={ monitor: true })
+    def execute
       Output.say "Converting your ~/.fog file to a ~/.aws/credentials file..."
 
       convert_fog_to_aws
