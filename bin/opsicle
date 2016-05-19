@@ -43,6 +43,14 @@ on_error do |exception|
   end
 end
 
+desc "Convert the ~/.fog file to a ~/.aws/credentials file"
+command 'legacy-credential-converter' do |c|
+  c.action do |args|
+    converter = Opsicle::LegacyCredentialConverter.new
+    converter.execute
+  end
+end
+
 desc "Deploy your current app to the given environment stack"
 arg_name '<environment>'
 command :deploy do |c|
@@ -205,6 +213,16 @@ command 'update' do |c|
     end
 
     Opsicle::Update.new(*args).execute(values, global_options.merge(options))
+  end
+end
+
+desc "Display IAM user profile information as JSON."
+arg_name '<environment>'
+command 'user-profile-info' do |c|
+  c.action do |global_options, options, args|
+    $color = false
+    raise ArgumentError, "Environment is required" unless (environment = args.first)
+    Opsicle::UserProfileInfo.new(environment).execute
   end
 end
 
