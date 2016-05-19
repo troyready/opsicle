@@ -7,6 +7,8 @@ module Opsicle
     let(:aws_client) { double }
     let(:config) { double }
     before do
+      mock_keys = {access_key_id: 'key', secret_access_key: 'secret'}
+      allow(config).to receive(:aws_credentials).and_return(mock_keys)
       allow(config).to receive(:opsworks_config).and_return({ stack_id: 'stack', app_id: 'app', something_else: 'true' })
       allow(Config).to receive(:new).and_return(config)
       allow(Aws::OpsWorks::Client).to receive(:new).and_return(aws_client)

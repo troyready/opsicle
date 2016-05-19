@@ -22,8 +22,7 @@ module Opsicle
     end
 
     def instances
-      client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })
-        .data[:instances]
+      client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })[:instances]
     end
   end
 end

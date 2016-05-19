@@ -13,6 +13,10 @@ module Opsicle
       @environment = environment.to_sym
     end
 
+    def aws_credentials
+      Aws::Credentials.new(aws_config[:access_key_id], aws_config[:secret_access_key])
+    end
+
     def aws_config
       return @aws_config if @aws_config
       if fog_config[:mfa_serial_number]

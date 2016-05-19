@@ -9,7 +9,7 @@ module Opsicle
     def initialize(environment)
       @config = Config.new(environment)
       @config.configure_aws!
-      @opsworks = Aws::OpsWorks::Client.new(region: 'us-east-1', credentials: @config)
+      @opsworks = Aws::OpsWorks::Client.new(region: 'us-east-1', credentials: @config.aws_credentials)
       @s3 = Aws::S3::Client.new(region: 'us-east-1')
     end
 
@@ -20,7 +20,7 @@ module Opsicle
     end
 
     def api_call(command, options={})
-      opsworks.public_send(command, options)
+      opsworks.public_send(command, options).to_h
     end
 
     def opsworks_url
