@@ -43,16 +43,18 @@ module Opsicle
     context "with a valid MFA config" do
       before do
         allow(File).to receive(:exist?).with(File.expand_path '~/.fog').and_return(true)
+        allow(File).to receive(:exist?).and_call_original
         mock_fog = { 'derp' => { 'aws_access_key_id' => 'key', 'aws_secret_access_key' => 'secret',
                      'mfa_serial_number' => 'tacos' }}
         allow(YAML).to receive(:load_file).with(File.expand_path '~/.fog').and_return(mock_fog)
 
         mock_sts = Class.new
         mock_session = Class.new
-        mock_credentials = { access_key_id: 'key', secret_access_key: 'secret', session_token: 'cats' }
+        mock_keys = {access_key_id: 'key', secret_access_key: 'secret'}
+        mock_credentials = {session_token: 'cats'}.merge(mock_keys)
         allow(mock_session).to receive(:credentials).and_return(mock_credentials)
         allow(mock_sts).to receive(:new_session).and_return(mock_session)
-        allow(Aws::STS).to receive(:new).and_return(mock_sts)
+        allow(Aws::STS::Client).to receive(:new).with(credentials: mock_keys, region: 'us-east-1').and_return(mock_sts)
         allow(Output).to receive(:ask).and_return(123456)
       end
 
