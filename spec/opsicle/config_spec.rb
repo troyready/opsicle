@@ -15,10 +15,12 @@ module Opsicle
       context "#aws_config" do
         it "should contain access_key_id" do
           expect(subject.aws_config).to have_key(:access_key_id)
+          expect(subject.aws_config).to eq({ :access_key_id => 'key', :secret_access_key => 'secret'})
         end
 
         it "should contain secret_access_key" do
           expect(subject.aws_config).to have_key(:secret_access_key)
+          expect(subject.aws_config).to eq({ :access_key_id => 'key', :secret_access_key => 'secret'})
         end
       end
 
