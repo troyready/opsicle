@@ -35,10 +35,10 @@ module Opsicle
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
-    def configure_aws!
-      # we want this to now be a vanilla ruby hash, not a method
-      Aws.config[:credentials] = @aws_config
-    end
+    # def configure_aws!
+    #   # we want this to now be a vanilla ruby hash, not a method
+    #   Aws.config[:credentials] = @aws_config
+    # end
 
     def load_config(file)
       raise MissingConfig, "Missing configuration file: #{file}  Run 'opsicle help'" unless File.exist?(file)

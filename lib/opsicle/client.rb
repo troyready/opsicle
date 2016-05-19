@@ -8,7 +8,6 @@ module Opsicle
 
     def initialize(environment)
       @config = Config.new(environment)
-      @config.configure_aws!
       @opsworks = Aws::OpsWorks::Client.new(region: 'us-east-1', credentials: @config.aws_credentials)
       @s3 = Aws::S3::Client.new(region: 'us-east-1')
     end

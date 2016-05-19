@@ -17,7 +17,6 @@ module Opsicle
 
     context "#run_command" do
       it "calls out to the aws client with all the config options" do
-        expect(config).to receive(:configure_aws!)
         expect(aws_client).to receive(:create_deployment).with(
           hash_including(
             command: { name: 'deploy', args: {} },
@@ -28,7 +27,6 @@ module Opsicle
         subject.run_command('deploy')
       end
       it "removes extra options from the opsworks config" do
-        expect(config).to receive(:configure_aws!)
         expect(aws_client).to receive(:create_deployment).with(hash_excluding(:something_else))
         subject.run_command('deploy')
       end
