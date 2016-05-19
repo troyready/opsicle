@@ -33,6 +33,14 @@ module Opsicle
           expect(subject.opsworks_config).to have_key(:app_id)
         end
       end
+
+      context "#aws_credentials" do
+        it "should return aws credentials" do
+          credentials = double
+          allow(Aws::Credentials).to receive(:new).and_return(credentials)
+          expect(subject.aws_credentials).to eq(credentials)
+        end
+      end
     end
 
     context "missing configs" do
