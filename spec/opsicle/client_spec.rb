@@ -14,9 +14,6 @@ module Opsicle
       allow(Config).to receive(:instance).and_return(config)
       allow(Aws::OpsWorks::Client).to receive(:new).and_return(aws_client)
       allow(Aws::S3::Client).to receive(:new).and_return(aws_client)
-      allow(subject).to receive(:configure_aws!).with('derp')
-    end
-    before :each do
       allow(config).to receive(:configure_aws!).with("derp")
       allow(aws_client).to receive(:configure_aws!).with("derp")
       allow(subject).to receive(:configure_aws!).with("derp")
