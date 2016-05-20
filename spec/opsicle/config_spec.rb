@@ -71,10 +71,10 @@ module Opsicle
       end
     end
 
-    # context "singleton support" do
-    #   it "should return a single instance" do
-    #     expect(Config.instance).to eq(Config.instance)
-    #   end
-    # end
+    context "singleton support" do
+      it "should return a single instance" do
+        expect(Config.instance).to eq(Config.instance)
+      end
+    end
   end
 end
