@@ -7,7 +7,7 @@ module Opsicle
       cred_path = File.expand_path("~/.aws/credentials")
       cred_file = File.open(cred_path, "a+")
       cred_text = cred_file.read
-      cred_groups = cred_text.scan(/\[([a-z]*)\]/).flatten
+      cred_groups = cred_text.scan(/\[([\S]*)\]/).flatten
 
       # open existing fog file, and load as yaml hash
       fog_path = File.expand_path("~/.fog")
