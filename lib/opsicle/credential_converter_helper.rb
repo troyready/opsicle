@@ -36,8 +36,7 @@ module Opsicle
       cred_file.puts
       cred_file.puts "[#{environment}]"
       credentials.each do | key, value |
-        cred_file.print "#{key} = "
-        cred_file.puts "#{value}"
+        cred_file.puts "#{key} = #{value}"
       end
     end
   end
