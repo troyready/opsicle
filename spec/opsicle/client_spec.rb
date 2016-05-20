@@ -10,7 +10,7 @@ module Opsicle
       ow_stub = double
       allow(config).to receive(:opsworks_config).and_return({ stack_id: 'stack', app_id: 'app', something_else: 'true' })
       allow(ow_stub).to receive(:client).and_return(aws_client)
-      allow(Config).to receive(:instance).and_return(config)
+      allow(Config).to receive(:new).and_return(config)
       allow(AWS::OpsWorks).to receive(:new).and_return(ow_stub)
     end
 

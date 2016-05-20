@@ -7,8 +7,8 @@ module Opsicle
     attr_reader :config
 
     def initialize(environment)
-      @config = Config.instance
-      @config.configure_aws!(environment)
+      @config = Config.new(environment)
+      @config.configure_aws!
       @opsworks = AWS::OpsWorks.new.client
       @s3 = AWS::S3.new
     end

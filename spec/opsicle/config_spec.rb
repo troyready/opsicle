@@ -3,16 +3,13 @@ require "opsicle"
 
 module Opsicle
   describe Config do
-    subject { Config.new }
+    subject { Config.new('derp') }
     context "with a valid config" do
       before do
         allow(File).to receive(:exist?).with(File.expand_path '~/.fog').and_return(true)
         allow(File).to receive(:exist?).with('./.opsicle').and_return(true)
         allow(YAML).to receive(:load_file).with(File.expand_path '~/.fog').and_return({'derp' => { 'aws_access_key_id' => 'key', 'aws_secret_access_key' => 'secret'}})
         allow(YAML).to receive(:load_file).with('./.opsicle').and_return({'derp' => { 'app_id' => 'app', 'stack_id' => 'stack'}})
-      end
-      before :each do
-        subject.configure_aws!('derp')
       end
 
       context "#aws_config" do
@@ -38,7 +35,7 @@ module Opsicle
       context "#configure_aws!" do
         it "should load the config into the AWS module" do
           expect(AWS).to receive(:config).with(hash_including(access_key_id: 'key', secret_access_key: 'secret'))
-          subject.configure_aws!('derp')
+          subject.configure_aws!
         end
       end
     end
@@ -63,7 +60,7 @@ module Opsicle
         it "should load the config into the AWS module" do
           expect(AWS).to receive(:config).with(hash_including(access_key_id: 'key', secret_access_key: 'secret',
                                                session_token: 'cats'))
-          subject.configure_aws!('derp')
+          subject.configure_aws!
         end
       end
     end
@@ -90,12 +87,6 @@ module Opsicle
         it "should gracefully raise an exception if no .fog file was found" do
           expect {subject.opsworks_config}.to raise_exception(Config::MissingConfig)
         end
-      end
-    end
-
-    context "singleton support" do
-      it "should return a single instance" do
-        expect(Config.instance).to eq(Config.instance)
       end
     end
   end
