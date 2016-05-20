@@ -25,11 +25,11 @@ module Opsicle
     end
 
     def copy_data(cred_file, environment, credentials)
+      cred_file.puts
       cred_file.puts "[#{environment}]"
       credentials.each do | key, value |
         cred_file.puts "#{key} = #{value}"
       end
-      cred_file.puts
     end
   end
 end
