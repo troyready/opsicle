@@ -63,7 +63,9 @@ module Opsicle
                                  region: 'us-east-1')
       role_arn = fog_config[:mfa_serial_number]
       role_arn = role_arn.scan(/(arn:aws:iam::[\d]+:)/).flatten.first
-      role_arn << "role/"
+      role_arn << "role/sportnginuser" # do we actually need to create a role here?
+      # will we need to call this with different credentials to valid when trying to make a session
+      # is `assume_role` even the method we should be using to replace new_session
       @session = sts.assume_role(role_arn: role_arn,
                                  role_session_name: "RoleSession1",
                                  duration_seconds: session_duration,
