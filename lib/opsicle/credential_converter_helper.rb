@@ -16,12 +16,7 @@ module Opsicle
       # for each environment in the fog file, go through and if it isn't in credentials file, then put it and data in
       fog_hash.each do | environment, credentials |
         if !cred_groups.include?(environment)
-          cred_file.puts
-          cred_file.puts "[#{environment}]"
-          credentials.each do | key, value |
-            cred_file.print "#{key} = "
-            cred_file.puts "#{value}"
-          end
+          copy_data(cred_file, environment, credentials)
         end
       end
 
@@ -35,6 +30,15 @@ module Opsicle
       cred_file = cred_file.reopen(cred_path, "w")
       cred_file.puts cred_text
       cred_file.close
+    end
+
+    def copy_data(cred_file, environment, credentials)
+      cred_file.puts
+      cred_file.puts "[#{environment}]"
+      credentials.each do | key, value |
+        cred_file.print "#{key} = "
+        cred_file.puts "#{value}"
+      end
     end
   end
 end
