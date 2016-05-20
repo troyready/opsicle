@@ -11,8 +11,16 @@ module Opsicle
       allow(config).to receive(:aws_credentials).and_return(mock_keys)
       allow(config).to receive(:opsworks_config).and_return({ stack_id: 'stack', app_id: 'app', something_else: 'true' })
       allow(Config).to receive(:new).and_return(config)
+      allow(Config).to receive(:instance).and_return(config)
       allow(Aws::OpsWorks::Client).to receive(:new).and_return(aws_client)
       allow(Aws::S3::Client).to receive(:new).and_return(aws_client)
+      allow(subject).to receive(:configure_aws!).with('derp')
+    end
+    before :each do
+      allow(config).to receive(:configure_aws!).with("derp")
+      allow(aws_client).to receive(:configure_aws!).with("derp")
+      allow(subject).to receive(:configure_aws!).with("derp")
+      allow(Client).to receive(:configure_aws!).with("derp")
     end
 
     context "#run_command" do

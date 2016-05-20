@@ -21,7 +21,8 @@ module Opsicle
     def aws_config
       return @aws_config if @aws_config
       if fog_config[:mfa_serial_number]
-        @aws_config = get_session.credentials
+        creds = get_session.credentials
+        @aws_config = { access_key_id: creds.access_key_id, secret_access_key: creds.secret_access_key }
       else
         @aws_config = { access_key_id: fog_config[:aws_access_key_id], secret_access_key: fog_config[:aws_secret_access_key] }
       end
@@ -36,6 +37,11 @@ module Opsicle
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
+    def configure_aws!(environment)
+      return if environment == @environment
+      @environment = environment.to_sym
+      end
+
     def load_config(file)
       raise MissingConfig, "Missing configuration file: #{file}  Run 'opsicle help'" unless File.exist?(file)
       env_config = symbolize_keys(YAML.load_file(file))[environment] rescue {}
@@ -45,16 +51,26 @@ module Opsicle
     end
 
     def get_mfa_token
-      Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
+      return @token if @token
+      @token = Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
     end
 
     def get_session
       return @session if @session
-      credentials = {access_key_id: fog_config[:aws_access_key_id],
-                     secret_access_key: fog_config[:aws_secret_access_key]}
-      sts = Aws::STS::Client.new(credentials: credentials, region: 'us-east-1')
-      @session = sts.new_session(duration: session_duration, serial_number: fog_config[:mfa_serial_number],
+      # credentials = {access_key_id: fog_config[:aws_access_key_id],
+      #                secret_access_key: fog_config[:aws_secret_access_key]}
+      sts = Aws::STS::Client.new(access_key_id: fog_config[:aws_access_key_id],
+                                 secret_access_key: fog_config[:aws_secret_access_key],
+                                 region: 'us-east-1')
+      role_arn = fog_config[:mfa_serial_number]
+      role_arn = role_arn.scan(/(arn:aws:iam::[\d]+:)/).flatten.first
+      role_arn << "role/"
+      @session = sts.assume_role(role_arn: role_arn,
+                                 role_session_name: "RoleSession1",
+                                 duration_seconds: session_duration,
+                                 serial_number: fog_config[:mfa_serial_number],
                                  token_code: get_mfa_token)
+      # @session = nil
     end
 
     def session_duration

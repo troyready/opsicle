@@ -7,7 +7,8 @@ module Opsicle
     attr_reader :config
 
     def initialize(environment)
-      @config = Config.new(environment)
+      @config = Config.instance
+      @config.configure_aws!(environment)
       @opsworks = Aws::OpsWorks::Client.new(region: 'us-east-1', credentials: @config.aws_credentials)
       @s3 = Aws::S3::Client.new(region: 'us-east-1')
     end
