@@ -20,24 +20,16 @@ module Opsicle
         end
       end
 
-      # close to save, reopen new credentials file, get rid of extra newlines at beginning, put edited text back into
-      # cred_file, and close
-      cred_file.close
-      cred_file = File.open(cred_path, "a+")
-      cred_text = cred_file.read
-      cred_text = cred_text.strip
-      cred_text << "\n"
-      cred_file = cred_file.reopen(cred_path, "w")
-      cred_file.puts cred_text
+      # close to save
       cred_file.close
     end
 
     def copy_data(cred_file, environment, credentials)
-      cred_file.puts
       cred_file.puts "[#{environment}]"
       credentials.each do | key, value |
         cred_file.puts "#{key} = #{value}"
       end
+      cred_file.puts
     end
   end
 end
