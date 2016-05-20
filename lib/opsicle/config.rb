@@ -9,8 +9,8 @@ module Opsicle
 
     attr_reader :environment
 
-    def initialize(environment)
-      @environment = environment.to_sym
+    def self.instance
+      @instance ||= new
     end
 
     def aws_credentials
@@ -35,7 +35,7 @@ module Opsicle
     def opsworks_config
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
-    
+
     def configure_aws!(environment)
       return if environment == @environment
       @environment = environment.to_sym
