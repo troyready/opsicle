@@ -1,5 +1,6 @@
 require 'yaml'
 require 'aws-sdk'
+require 'singleton'
 
 module Opsicle
   class Config
@@ -9,8 +10,8 @@ module Opsicle
 
     attr_reader :environment
 
-    def initialize(environment)
-      @environment = environment.to_sym
+    def self.instance
+      @instance ||= new
     end
 
     def aws_credentials
@@ -38,7 +39,7 @@ module Opsicle
     def load_config(file)
       raise MissingConfig, "Missing configuration file: #{file}  Run 'opsicle help'" unless File.exist?(file)
       env_config = symbolize_keys(YAML.load_file(file))[environment] rescue {}
-      raise MissingEnvironment, "Configuration for the \'#{environment}\' environment could not be found in #{file}" unless env_config != nil
+      raise MissingEnvironment, "Configuration for the '#{environment}' environment could not be found in #{file}" unless env_config != nil
 
       env_config
     end
