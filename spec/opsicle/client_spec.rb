@@ -14,10 +14,10 @@ module Opsicle
       allow(Config).to receive(:instance).and_return(config)
       allow(Aws::OpsWorks::Client).to receive(:new).and_return(aws_client)
       allow(Aws::S3::Client).to receive(:new).and_return(aws_client)
-      allow(config).to receive(:configure_aws!).with("derp")
-      allow(aws_client).to receive(:configure_aws!).with("derp")
-      allow(subject).to receive(:configure_aws!).with("derp")
-      allow(Client).to receive(:configure_aws!).with("derp")
+      allow(config).to receive(:configure_aws_environment!).with("derp")
+      allow(aws_client).to receive(:configure_aws_environment!).with("derp")
+      allow(subject).to receive(:configure_aws_environment!).with("derp")
+      allow(Client).to receive(:configure_aws_environment!).with("derp")
     end
 
     context "#run_command" do

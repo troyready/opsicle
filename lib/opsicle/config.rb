@@ -36,7 +36,7 @@ module Opsicle
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
-    def configure_aws!(environment)
+    def configure_aws_environment!(environment)
       return if environment == @environment
       @environment = environment.to_sym
       end

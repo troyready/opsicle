@@ -12,7 +12,7 @@ module Opsicle
         allow(YAML).to receive(:load_file).with('./.opsicle').and_return({'derp' => { 'app_id' => 'app', 'stack_id' => 'stack'}})
       end
       before :each do
-        subject.configure_aws!('derp')
+        subject.configure_aws_environment!('derp')
       end
 
       context "#aws_config" do
@@ -45,9 +45,9 @@ module Opsicle
         end
       end
 
-      context "#configure_aws!" do
-        it "should return aws credentials" do
-          expect(subject.configure_aws!("environment")).to eq(:environment)
+      context "#configure_aws_environment!" do
+        it "should return the environment as a symbol" do
+          expect(subject.configure_aws_environment!("environment")).to eq(:environment)
         end
       end
     end
