@@ -44,6 +44,12 @@ module Opsicle
           expect(subject.aws_credentials).to eq(credentials)
         end
       end
+
+      context "#configure_aws!" do
+        it "should return aws credentials" do
+          expect(subject.configure_aws!("environment")).to eq(:environment)
+        end
+      end
     end
 
     context "missing configs" do
