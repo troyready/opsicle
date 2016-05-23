@@ -14,14 +14,14 @@ module Opsicle
     end
 
     def aws_credentials
-      Aws::Credentials.new(aws_config[:access_key_id], aws_config[:secret_access_key])
+      Aws::Credentials.new(aws_config[:access_key_id], aws_config[:secret_access_key], aws_config[:session_token])
     end
 
     def aws_config
       return @aws_config if @aws_config
       if fog_config[:mfa_serial_number]
         creds = get_session.credentials
-        @aws_config = { access_key_id: creds.access_key_id, secret_access_key: creds.secret_access_key }
+        @aws_config = { access_key_id: creds.access_key_id, secret_access_key: creds.secret_access_key, session_token: creds.session_token }
       else
         @aws_config = { access_key_id: fog_config[:aws_access_key_id], secret_access_key: fog_config[:aws_secret_access_key] }
       end
@@ -56,22 +56,12 @@ module Opsicle
 
     def get_session
       return @session if @session
-      # credentials = {access_key_id: fog_config[:aws_access_key_id],
-      #                secret_access_key: fog_config[:aws_secret_access_key]}
       sts = Aws::STS::Client.new(access_key_id: fog_config[:aws_access_key_id],
                                  secret_access_key: fog_config[:aws_secret_access_key],
                                  region: 'us-east-1')
-      role_arn = fog_config[:mfa_serial_number]
-      role_arn = role_arn.scan(/(arn:aws:iam::[\d]+:)/).flatten.first
-      role_arn << "role/sportnginuser" # do we actually need to create a role here?
-      # will we need to call this with different credentials to valid when trying to make a session
-      # is `assume_role` even the method we should be using to replace new_session
-      @session = sts.assume_role(role_arn: role_arn,
-                                 role_session_name: "RoleSession1",
-                                 duration_seconds: session_duration,
-                                 serial_number: fog_config[:mfa_serial_number],
-                                 token_code: get_mfa_token)
-      # @session = nil
+      @session = sts.get_session_token(duration_seconds: session_duration,
+                                       serial_number: fog_config[:mfa_serial_number],
+                                       token_code: get_mfa_token)
     end
 
     def session_duration
