@@ -37,7 +37,6 @@ module Opsicle
     end
 
     def configure_aws_environment!(environment)
-      return if environment == @environment
       @environment = environment.to_sym
       end
 
