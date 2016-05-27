@@ -7,7 +7,6 @@ module Opsicle
     let(:client) { double(config: double(opsworks_config: {stack_id: "1234"})) }
     let(:stack) { double(client: client) }
     let(:user_profile) { double }
-    let(:api_call) { double }
     before do
       allow(Client).to receive(:new).with('derp').and_return(client)
       allow(Stack).to receive(:new).with(client).and_return(stack)
@@ -104,14 +103,12 @@ module Opsicle
     context "#instances" do
       it "makes a describe_instances API call" do
         expect(client).to receive(:api_call).with(:describe_instances, {stack_id: "1234"})
-          .and_return(api_call)
-        expect(api_call).to receive(:data).and_return(instances: [{:name => :foo, :status => "online"},{:name => :bar, :status => "stopped"}])
+          .and_return(instances: [{:name => :foo, :status => "online"},{:name => :bar, :status => "stopped"}])
         expect(subject.instances).to eq([{:name => :foo, :status=>"online"}])
       end
       it "sorts instances by hostname" do
         expect(client).to receive(:api_call).with(:describe_instances, {stack_id: "1234"})
-          .and_return(api_call)
-        expect(api_call).to receive(:data).and_return(instances: [{:hostname => "taco", :status => "online"},{:hostname => "bar", :status => "online"}])
+          .and_return(instances: [{:hostname => "taco", :status => "online"},{:hostname => "bar", :status => "online"}])
         expect(subject.instances).to eq([{:hostname => "bar", :status=>"online"}, {:hostname => "taco", :status=>"online"}])
       end
     end

@@ -3,7 +3,7 @@ require "opsicle"
 
 module Opsicle
   describe Config do
-    subject { Config.new('derp') }
+    subject { Config.new }
     context "with a valid config" do
       before do
         allow(File).to receive(:exist?).with(File.expand_path '~/.fog').and_return(true)
@@ -11,14 +11,19 @@ module Opsicle
         allow(YAML).to receive(:load_file).with(File.expand_path '~/.fog').and_return({'derp' => { 'aws_access_key_id' => 'key', 'aws_secret_access_key' => 'secret'}})
         allow(YAML).to receive(:load_file).with('./.opsicle').and_return({'derp' => { 'app_id' => 'app', 'stack_id' => 'stack'}})
       end
+      before :each do
+        subject.configure_aws_environment!('derp')
+      end
 
       context "#aws_config" do
         it "should contain access_key_id" do
           expect(subject.aws_config).to have_key(:access_key_id)
+          expect(subject.aws_config).to eq({ :access_key_id => 'key', :secret_access_key => 'secret'})
         end
 
         it "should contain secret_access_key" do
           expect(subject.aws_config).to have_key(:secret_access_key)
+          expect(subject.aws_config).to eq({ :access_key_id => 'key', :secret_access_key => 'secret'})
         end
       end
 
@@ -32,35 +37,17 @@ module Opsicle
         end
       end
 
-      context "#configure_aws!" do
-        it "should load the config into the AWS module" do
-          expect(AWS).to receive(:config).with(hash_including(access_key_id: 'key', secret_access_key: 'secret'))
-          subject.configure_aws!
+      context "#aws_credentials" do
+        it "should return aws credentials" do
+          credentials = double
+          allow(Aws::Credentials).to receive(:new).and_return(credentials)
+          expect(subject.aws_credentials).to eq(credentials)
         end
       end
-    end
 
-    context "with a valid MFA config" do
-      before do
-        allow(File).to receive(:exist?).with(File.expand_path '~/.fog').and_return(true)
-        mock_fog = { 'derp' => { 'aws_access_key_id' => 'key', 'aws_secret_access_key' => 'secret',
-                     'mfa_serial_number' => 'tacos' }}
-        allow(YAML).to receive(:load_file).with(File.expand_path '~/.fog').and_return(mock_fog)
-
-        mock_sts = Class.new
-        mock_session = Class.new
-        mock_credentials = { access_key_id: 'key', secret_access_key: 'secret', session_token: 'cats' }
-        allow(mock_session).to receive(:credentials).and_return(mock_credentials)
-        allow(mock_sts).to receive(:new_session).and_return(mock_session)
-        allow(AWS::STS).to receive(:new).and_return(mock_sts)
-        allow(Output).to receive(:ask).and_return(123456)
-      end
-
-      context "#configure_aws!" do
-        it "should load the config into the AWS module" do
-          expect(AWS).to receive(:config).with(hash_including(access_key_id: 'key', secret_access_key: 'secret',
-                                               session_token: 'cats'))
-          subject.configure_aws!
+      context "#configure_aws_environment!" do
+        it "should return the environment as a symbol" do
+          expect(subject.configure_aws_environment!("environment")).to eq(:environment)
         end
       end
     end
@@ -87,6 +74,12 @@ module Opsicle
         it "should gracefully raise an exception if no .fog file was found" do
           expect {subject.opsworks_config}.to raise_exception(Config::MissingConfig)
         end
+      end
+    end
+
+    context "singleton support" do
+      it "should return a single instance" do
+        expect(Config.instance).to eq(Config.instance)
       end
     end
   end
