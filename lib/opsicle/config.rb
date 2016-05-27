@@ -9,14 +9,19 @@ module Opsicle
 
     attr_reader :environment
 
-    def initialize(environment)
-      @environment = environment.to_sym
+    def self.instance
+      @instance ||= new
+    end
+
+    def aws_credentials
+      Aws::Credentials.new(aws_config[:access_key_id], aws_config[:secret_access_key], aws_config[:session_token])
     end
 
     def aws_config
       return @aws_config if @aws_config
       if fog_config[:mfa_serial_number]
-        @aws_config = get_session.credentials
+        creds = get_session.credentials
+        @aws_config = { access_key_id: creds.access_key_id, secret_access_key: creds.secret_access_key, session_token: creds.session_token }
       else
         @aws_config = { access_key_id: fog_config[:aws_access_key_id], secret_access_key: fog_config[:aws_secret_access_key] }
       end
@@ -31,9 +36,9 @@ module Opsicle
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
-    def configure_aws!
-      AWS.config(aws_config)
-    end
+    def configure_aws_environment!(environment)
+      @environment = environment.to_sym
+      end
 
     def load_config(file)
       raise MissingConfig, "Missing configuration file: #{file}  Run 'opsicle help'" unless File.exist?(file)
@@ -44,15 +49,18 @@ module Opsicle
     end
 
     def get_mfa_token
-      Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
+      return @token if @token
+      @token = Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
     end
 
     def get_session
       return @session if @session
-      sts = AWS::STS.new(access_key_id: fog_config[:aws_access_key_id],
-                           secret_access_key: fog_config[:aws_secret_access_key])
-      @session = sts.new_session(duration: session_duration, serial_number: fog_config[:mfa_serial_number],
-                                 token_code: get_mfa_token)
+      sts = Aws::STS::Client.new(access_key_id: fog_config[:aws_access_key_id],
+                                 secret_access_key: fog_config[:aws_secret_access_key],
+                                 region: 'us-east-1')
+      @session = sts.get_session_token(duration_seconds: session_duration,
+                                       serial_number: fog_config[:mfa_serial_number],
+                                       token_code: get_mfa_token)
     end
 
     def session_duration

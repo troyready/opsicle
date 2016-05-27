@@ -2,7 +2,7 @@ module Opsicle
   class Instances
 
     attr_accessor :client
-    class <<self
+    class << self
       attr_accessor :client
     end
 

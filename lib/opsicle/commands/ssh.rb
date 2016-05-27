@@ -29,8 +29,7 @@ module Opsicle
     end
 
     def instances
-      @instances ||= client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })
-                           .data[:instances]
+      @instances ||= client.api_call(:describe_instances, { stack_id: client.config.opsworks_config[:stack_id] })[:instances]
                            .select { |instance| instance[:status].to_s == 'online'}
                            .sort { |a,b| a[:hostname] <=> b[:hostname] }
     end

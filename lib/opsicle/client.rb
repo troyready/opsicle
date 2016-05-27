@@ -7,10 +7,10 @@ module Opsicle
     attr_reader :config
 
     def initialize(environment)
-      @config = Config.new(environment)
-      @config.configure_aws!
-      @opsworks = AWS::OpsWorks.new.client
-      @s3 = AWS::S3.new
+      @config = Config.instance
+      @config.configure_aws_environment!(environment)
+      @opsworks = Aws::OpsWorks::Client.new(region: 'us-east-1', credentials: @config.aws_credentials)
+      @s3 = Aws::S3::Client.new(region: 'us-east-1', credentials: @config.aws_credentials)
     end
 
     def run_command(command, command_args={}, options={})
@@ -20,7 +20,7 @@ module Opsicle
     end
 
     def api_call(command, options={})
-      opsworks.public_send(command, options)
+      opsworks.public_send(command, options).to_h
     end
 
     def opsworks_url
