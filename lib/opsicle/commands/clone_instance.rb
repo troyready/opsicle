@@ -1,26 +1,18 @@
 require 'gli'
+require "opsicle/user_profile"
 
 module Opsicle
   class CloneInstance
-    # attr_reader :ami, :instance_type
 
     def initialize(environment)
       @client = Client.new(environment)
       @stack_id = @client.config.opsworks_config[:stack_id]
-      Aws.config.update({
-        region: 'us-east-1',
-        credentials: Aws::SharedCredentials.new(profile_name: @profile)
-      })
-      @opsworks = Aws::OpsWorks::Client.new
+      @opsworks = @client.opsworks
       @cli = HighLine.new
     end
 
     def execute(options={})
-      Output.say "Let's clone some instances..."
-      puts "Hello"
-      puts options
       puts "Stack ID = #{@stack_id}"
-
       puts "\nLayers:\n"
       layers = @opsworks.describe_layers({ :stack_id => @stack_id }).data
       layers[:layers].each_with_index {|layer, index| puts "#{index.to_i + 1} #{layer.name}"}
@@ -35,7 +27,7 @@ module Opsicle
       instance_indexes_list = @cli.ask("Instances? (comma sep list)\n", lambda { |str| str.split(/,\s*/) })
       instance_indexes_list.map! { |instance_index| instance_index.to_i - 1 }
 
-      hostname_modifier = @cli.ask("\nHostname modifier?\n", Integer) { |q| q.in = 1..90 }
+      hostname_modifier = @cli.ask("\nHostname modifier? (number from 1 to 90\n", Integer) { |q| q.in = 1..90 }
 
       instance_indexes_list.each do |instance_index|
         old_instance = instances.instances[instance_index]
