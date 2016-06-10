@@ -1,8 +1,4 @@
-require 'rubygems'
 require 'gli'
-require 'opsicle'
-require 'json'
-require 'yaml'
 
 module Opsicle
   class CloneInstance
@@ -39,7 +35,7 @@ module Opsicle
       instance_indexes_list = @cli.ask("Instances? (comma sep list)\n", lambda { |str| str.split(/,\s*/) })
       instance_indexes_list.map! { |instance_index| instance_index.to_i - 1 }
 
-      hostname_modifier = @cli.ask("Hostname modifier?\n", Integer) { |q| q.in = 1..90 }
+      hostname_modifier = @cli.ask("\nHostname modifier?\n", Integer) { |q| q.in = 1..90 }
 
       instance_indexes_list.each do |instance_index|
         old_instance = instances.instances[instance_index]
