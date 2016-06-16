@@ -1,3 +1,16 @@
+#### v1.0.0
+* Simplifying legacy-credential-converter to use hash to read credentials, not regexes"
+
+  > Brian Bergstrom, newzac, Emma Sax: : https://github.com/sportngin/opsicle/pull/92
+
+* Upgrading aws-sdk to v2 from v1
+
+  > Emma Sax: Andy Fleener: https://github.com/sportngin/opsicle/pull/91
+
+* Making conversion command from .fog to .aws/credentials
+
+  > Emma Sax: Andy Fleener: https://github.com/sportngin/opsicle/pull/90
+
 #### v0.18.1
 #### v0.18.0
 #### v0.16.0
