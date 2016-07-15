@@ -3,79 +3,32 @@ require "opsicle"
 
 module Opsicle
   describe GetFailureLog do
-    subject { GetFailureLog.new('derp') }
+    before do
+      deploy1 = double('deploy', status: "fail", deployment_id: '678903')
+      deploy2 = double('deploy', status: "fail", deployment_id: '294172')
+      deployments = double('deployments', deployments: [deploy1, deploy2])
+      command1 = double('command', log_url: 'http://example1.com')
+      command2 = double('command', log_url: 'http://example2.com')
+      commands = {:commands => [command1, command2]}
+      @stack = double('stack', stack_id: '12345')
+      opsworks_client = double('opsworks_client', describe_deployments: deployments, describe_commands: commands)
+      @client = double('client', opsworks: opsworks_client)
+      allow(Client).to receive(:new).and_return(@client)
+      allow(Opsicle::Stack).to receive(:new).and_return(@stack)
 
-    # context "#execute" do
-    #   let(:client) { double }
-    #   let(:monitor) { double(:start => nil) }
-    #   before do
-    #     allow(Client).to receive(:new).with('derp').and_return(client)
-    #     allow(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
+    end
 
-    #     allow(Monitor::App).to receive(:new).and_return(monitor)
-    #     allow(monitor).to receive(:start)
+    it "should initialize a new GetFailureLog" do
+      expect(Client).to receive(:new)
+      expect(Opsicle::Stack).to receive(:new)
+      GetFailureLog.new('environment')
+    end
 
-    #     allow(Output).to receive(:say)
-    #     allow(Output).to receive(:say_verbose)
-    #   end
-
-    #   it "creates a new deployment and opens stack monitor" do
-    #     expect(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
-    #     expect(subject).to_not receive(:open_deploy)
-    #     expect(Monitor::App).to receive(:new).with('derp', :monitor => true)
-
-    #     subject.execute
-    #   end
-
-    #   it "creates a new deployment that exits the stack monitor on completion" do
-    #     expect(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
-    #     expect(subject).to_not receive(:open_deploy)
-    #     expect(Monitor::App).to receive(:new).with('derp', :monitor => true, :deployment_id => 'derp')
-
-    #     subject.execute({:monitor => true, :track => true})
-    #   end
-
-    #   it "creates a new deployment with migrations" do
-    #     expect(client).to receive(:run_command).with('deploy', {"migrate"=>["true"]}, {}).and_return({deployment_id: 'derp'})
-    #     expect(subject).to_not receive(:open_deploy)
-    #     subject.execute({ monitor: false, migrate: true })
-    #   end
-
-    #   it "creates a new deployment migrations explicitly disabled" do
-    #     expect(client).to receive(:run_command).with('deploy', {}, {}).and_return({deployment_id: 'derp'})
-    #     expect(subject).to_not receive(:open_deploy)
-    #     subject.execute({ monitor: false, migrate: false })
-    #   end
-
-    #   it "pass custom json to the deploy if provided" do
-    #     expect(client).to receive(:run_command).with('deploy', {}, { 'custom_json' => '{ "expire_css": true }' }).and_return({deployment_id: 'derp'})
-    #     expect(subject).to_not receive(:open_deploy)
-    #     expect(Monitor::App).to_not receive(:new)
-
-    #     subject.execute({ json: '{ "expire_css": true }' })
-    #   end
-
-    #   it "opens the OpsWorks deployments screen if browser option is given" do
-    #     expect(subject).to receive(:open_deploy)
-    #     expect(Monitor::App).to_not receive(:new)
-
-    #     subject.execute({ browser: true })
-    #   end
-
-    #   it "doesn't open the stack monitor or open the browser window when no-monitor option is given" do
-    #     expect(subject).to_not receive(:open_deploy)
-    #     expect(Monitor::App).to_not receive(:new)
-
-    #     subject.execute({ monitor: false })
-    #   end
-    # end
-
-    # context "#client" do
-    #   it "generates a new aws client from the given configs" do
-    #     expect(Client).to receive(:new).with('derp')
-    #     subject.client
-    #   end
-    # end
-
+    it "should get a recent failure log" do
+      log = GetFailureLog.new('environment')
+      expect(@client).to receive(:opsworks)
+      expect(log).to receive(:system).and_return(true)
+      log.execute
+    end
   end
 end

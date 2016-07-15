@@ -16,6 +16,8 @@ test/tmp
 test/version_tmp
 tmp
 lib/opsicle/.DS_Store
+lib/opsicle/monitor/.DS_Store
+.DS_Store
 
 # YARD artifacts
 .yardoc

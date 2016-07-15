@@ -7,7 +7,7 @@ module Opsicle
       stack_id_hash = {stack_id: stack.stack_id}
 
       deployments = client.opsworks.describe_deployments(stack_id_hash).deployments
-      failed_deployments = deployments.select{ |d| !d.status.eql? "successful" }
+      failed_deployments = deployments.select{ |deploy| !deploy.status.eql? "successful" }
       failed_deployment_id = failed_deployments.first.deployment_id
 
       command_list = client.opsworks.describe_commands(deployment_id: failed_deployment_id)
