@@ -5,13 +5,13 @@ module Opsicle
      attr_reader :bucket
 
      def initialize(client, bucket_name)
-        @bucket = client.s3.buckets[bucket_name]
+        @bucket = Aws::S3::Bucket.new(name: bucket_name, client: client.s3)
         raise UnknownBucket unless @bucket.exists?
      end
 
      def update(object)
-       obj = bucket.objects[object]
-       obj.write(Pathname.new(object))
+      obj = bucket.object(object)
+      obj.upload_file(Pathname.new(object))
      end
   end
 
