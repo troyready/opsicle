@@ -18,6 +18,10 @@ module Opsicle
       stack_summary[:name]
     end
 
+    def id
+      stack_summary[:stack_id]
+    end
+
     def layers
       @layers ||= @client.api_call('describe_layers', stack_id: @client.config.opsworks_config[:stack_id])[:layers]
     end
