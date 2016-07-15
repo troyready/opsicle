@@ -59,6 +59,16 @@ By default, deploying opens the Opsicle Stack Monitor.
 You may also use `--browser` to open the OpsWorks deployments screen instead,
 or `--no-monitor` to ignore both monitoring options
 
+### Get-failure-log
+```bash
+
+# Get the failure log from a deployment for the current app
+opsicle get-failure-log staging
+```
+
+This will open a browser window the failure log from the most recent failure log from
+a deployment in the current app.
+
 ### SSH
 ```bash
 # SSH to a server instance in the given environment stack
