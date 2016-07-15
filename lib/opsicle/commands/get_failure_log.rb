@@ -2,7 +2,7 @@
 
 module Opsicle
   class GetFailureLog
-    # include DeployHelper
+    include GetFailureLogHelper
     attr_reader :client
 
     def initialize(environment)
@@ -12,6 +12,8 @@ module Opsicle
 
     def execute(options={ monitor: true })
       Output.say "Getting most recent failure log..."
+
+      get_failure_log
 
       # do something here
     end
