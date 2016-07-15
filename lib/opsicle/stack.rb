@@ -18,7 +18,7 @@ module Opsicle
       stack_summary[:name]
     end
 
-    def id
+    def stack_id
       stack_summary[:stack_id]
     end
 
