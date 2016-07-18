@@ -1,3 +1,8 @@
+#### v1.0.1
+* Fix bug that prevents users from updating chef cookbooks on aws-sdk v2
+
+  > Emma Sax: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/98
+
 #### v1.0.0
 * Simplifying legacy-credential-converter to use hash to read credentials, not regexes"
 
