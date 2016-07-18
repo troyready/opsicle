@@ -1,8 +1,5 @@
-require "opsicle/get_failure_log_helper"
-
 module Opsicle
   class GetFailureLog
-    include GetFailureLogHelper
     attr_reader :client, :stack
 
     def initialize(environment)
@@ -14,7 +11,14 @@ module Opsicle
     def execute
       puts "Getting most recent failure log..."
 
-      get_recent_failure_log(@client, @stack)
+      stack_id_hash = {stack_id: @stack.stack_id}
+      deployments = @client.opsworks.describe_deployments(stack_id_hash).deployments
+      failed_deployments = deployments.select{ |deploy| !deploy.status.eql? "successful" }
+      failed_deployment_id = failed_deployments.first.deployment_id
+      command_list = @client.opsworks.describe_commands(deployment_id: failed_deployment_id)
+      log_url = command_list[:commands].first.log_url
+
+      system("open", log_url)
     end
   end
 end
