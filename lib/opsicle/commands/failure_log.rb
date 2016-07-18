@@ -25,11 +25,12 @@ module Opsicle
       log_url = target_failed_command.first.log_url
       
       system("open", log_url) if log_url
+      puts "No failed deployments in available history." unless log_url
     end
 
     def fetch_failed_deployments
       deployments = @client.opsworks.describe_deployments(stack_id: @stack.stack_id).deployments
-      deployments.reject{ |deploy| deploy.status.eql? "successful" }
+      deployments.select{ |deploy| deploy.status.eql? "failed" }
     end
 
     def fetch_instance_id(failed_deployments_instances)

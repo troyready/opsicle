@@ -6,8 +6,8 @@ module Opsicle
     before do
       @instance = double('instance', instance_id: 123456)
       @instances = double('instances', instances: [@instance])
-      @deploy1 = double('deploy', status: "fail", deployment_id: 678903, instance_ids: [123456])
-      @deploy2 = double('deploy', status: "fail", deployment_id: 294172, instance_ids: [123456])
+      @deploy1 = double('deploy', status: "failed", deployment_id: 678903, instance_ids: [123456])
+      @deploy2 = double('deploy', status: "failed", deployment_id: 294172, instance_ids: [123456])
       @deployments = double('deployments', deployments: [@deploy1, @deploy2])
       @command1 = double('command', log_url: 'http://example1.com', deployment_id: 678903)
       @command2 = double('command', log_url: 'http://example2.com', deployment_id: 294172)
