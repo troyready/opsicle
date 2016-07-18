@@ -13,7 +13,9 @@ module Opsicle
       @command2 = double('command', log_url: 'http://example2.com', deployment_id: 294172)
       @commands = {:commands => [@command1, @command2]}
       @stack = double('stack', stack_id: '12345')
-      @opsworks_client = double('opsworks_client', describe_deployments: @deployments, describe_instances: @instances, describe_commands: @commands)
+      @opsworks_client = double('opsworks_client', describe_deployments: @deployments,
+                                                   describe_instances: @instances,
+                                                   describe_commands: @commands)
       @client = double('client', opsworks: @opsworks_client)
       allow(Client).to receive(:new).and_return(@client)
       allow(Opsicle::Stack).to receive(:new).and_return(@stack)
