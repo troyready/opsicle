@@ -16,16 +16,21 @@ module Opsicle
 
     def fetch
       failed_deployments = fetch_failed_deployments
-      failed_deployment_id = failed_deployments.first.deployment_id
-      failed_deployments_instances = failed_deployments.first.instance_ids
 
-      involved_instance_id = fetch_instance_id(failed_deployments_instances)
+      unless failed_deployments.empty?
+        failed_deployment_id = failed_deployments.first.deployment_id
+        failed_deployments_instances = failed_deployments.first.instance_ids
 
-      target_failed_command = fetch_target_command(involved_instance_id, failed_deployment_id)
-      log_url = target_failed_command.first.log_url
-      
-      system("open", log_url) if log_url
-      puts "No failed deployments in available history." unless log_url
+        involved_instance_id = fetch_instance_id(failed_deployments_instances)
+
+        target_failed_command = fetch_target_command(involved_instance_id, failed_deployment_id)
+        log_url = target_failed_command.first.log_url
+        
+        system("open", log_url) if log_url
+        puts "Unable to find a url to open." unless log_url
+      else
+        puts "No failed deployments in available history."
+      end
     end
 
     def fetch_failed_deployments
