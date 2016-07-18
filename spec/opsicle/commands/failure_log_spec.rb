@@ -2,7 +2,7 @@ require "spec_helper"
 require "opsicle"
 
 module Opsicle
-  describe GetFailureLog do
+  describe FailureLog do
     before do
       deploy1 = double('deploy', status: "fail", deployment_id: '678903')
       deploy2 = double('deploy', status: "fail", deployment_id: '294172')
@@ -18,14 +18,14 @@ module Opsicle
 
     end
 
-    it "should initialize a new GetFailureLog" do
+    it "should initialize a new FailureLog" do
       expect(Client).to receive(:new)
       expect(Opsicle::Stack).to receive(:new)
-      GetFailureLog.new('environment')
+      FailureLog.new('environment')
     end
 
     it "should get a recent failure log" do
-      log = GetFailureLog.new('environment')
+      log = FailureLog.new('environment')
       expect(@client).to receive(:opsworks)
       expect(log).to receive(:system).and_return(true)
       log.execute

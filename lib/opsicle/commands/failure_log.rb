@@ -1,5 +1,5 @@
 module Opsicle
-  class GetFailureLog
+  class FailureLog
     attr_reader :client, :stack
 
     def initialize(environment)
@@ -11,6 +11,10 @@ module Opsicle
     def execute
       puts "Getting most recent failure log..."
 
+      fetch
+    end
+
+    def fetch
       stack_id_hash = {stack_id: @stack.stack_id}
       deployments = @client.opsworks.describe_deployments(stack_id_hash).deployments
       failed_deployments = deployments.select{ |deploy| !deploy.status.eql? "successful" }

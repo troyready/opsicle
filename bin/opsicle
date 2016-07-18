@@ -53,10 +53,10 @@ end
 
 desc "Get most recent failure log for a stack"
 arg_name '<environment>'
-command 'get-failure-log' do |c|
+command 'failure-log' do |c|
   c.action do |global_options, options, args|
     raise ArgumentError, 'You must specify an environment' unless args.first
-    Opsicle::GetFailureLog.new(args.first).execute
+    Opsicle::FailureLog.new(args.first).execute
   end
 end
 
