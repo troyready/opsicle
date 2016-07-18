@@ -29,18 +29,18 @@ module Opsicle
 
     def fetch_failed_deployments
       deployments = @client.opsworks.describe_deployments(stack_id: @stack.stack_id).deployments
-      return deployments.select{ |deploy| !deploy.status.eql? "successful" }
+      deployments.reject{ |deploy| deploy.status.eql? "successful" }
     end
 
     def fetch_instance_id(failed_deployments_instances)
       involved_instances = @client.opsworks.describe_instances(instance_ids: failed_deployments_instances).instances
       choice = select_instance(involved_instances)
-      return involved_instances[choice-1].instance_id
+      involved_instances[choice-1].instance_id
     end
 
     def fetch_target_command(involved_instance_id, failed_deployment_id)
       command_list = @client.opsworks.describe_commands(instance_id: involved_instance_id)[:commands]
-      return command_list.select{ |command| command.deployment_id == failed_deployment_id }
+      command_list.select{ |command| command.deployment_id == failed_deployment_id }
     end
 
     def select_instance(instance_list)
