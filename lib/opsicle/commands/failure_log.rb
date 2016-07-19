@@ -21,13 +21,17 @@ module Opsicle
         failed_deployment_id = failed_deployments.first.deployment_id
         failed_deployments_instances = failed_deployments.first.instance_ids
 
-        involved_instance_id = fetch_instance_id(failed_deployments_instances)
+        unless failed_deployments_instances.empty?
+          involved_instance_id = fetch_instance_id(failed_deployments_instances)
 
-        target_failed_command = fetch_target_command(involved_instance_id, failed_deployment_id)
-        log_url = target_failed_command.first.log_url
+          target_failed_command = fetch_target_command(involved_instance_id, failed_deployment_id)
+          log_url = target_failed_command.first.log_url
         
-        system("open", log_url) if log_url
-        puts "Unable to find a url to open." unless log_url
+          system("open", log_url) if log_url
+          puts "Unable to find a url to open." unless log_url
+        else
+          puts "There is at least one failed deployment, but there is no log available for that failure."
+        end
       else
         puts "No failed deployments in available history."
       end
