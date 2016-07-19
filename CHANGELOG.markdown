@@ -1,3 +1,8 @@
+#### v1.1.1
+* Fix bug with failure-log command
+
+  > Emma Sax: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/99
+
 #### v1.1.0
 * Adding command to get recent failure log from failed deployment
 
