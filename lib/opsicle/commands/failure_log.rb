@@ -30,7 +30,7 @@ module Opsicle
           system("open", log_url) if log_url
           puts "Unable to find a url to open." unless log_url
         else
-          puts "There are either no failed deployments in available history or there are no available logs for failures."
+          puts "There is at least one failed deployment, but there is no log available for that failure."
         end
       else
         puts "No failed deployments in available history."
