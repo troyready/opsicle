@@ -1,3 +1,8 @@
+#### v1.1.0
+* Adding command to get recent failure log from failed deployment
+
+  > Emma Sax: Chris Arcand, Brian Bergstrom: https://github.com/sportngin/opsicle/pull/97
+
 #### v1.0.1
 * Fix bug that prevents users from updating chef cookbooks on aws-sdk v2
 
