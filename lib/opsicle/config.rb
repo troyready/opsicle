@@ -3,7 +3,6 @@ require 'aws-sdk'
 
 module Opsicle
   class Config
-    FOG_CONFIG_PATH = '~/.fog'
     OPSICLE_CONFIG_PATH = './.opsicle'
     CREDS_CONFIG_PATH = '~/.aws/credentials'
     SESSION_DURATION = 3600
@@ -15,16 +14,11 @@ module Opsicle
     end
 
     def aws_credentials
-      if credentials__config_exist?
+      if File.exist?(File.expand_path(CREDS_CONFIG_PATH))
         authenticate_with_credentials
       else
-        abort('I am no longer able to authenticate through your ~/.fog file. Please run `opsicle legacy-credential-converter` before proceeding.`')
+        abort('Opsicle can no longer authenticate through your ~/.fog file. Please run `opsicle legacy-credential-converter` before proceeding.')
       end
-    end
-
-    def credentials__config_exist?
-      return @cred_config if @cred_config
-      @cred_config = File.exist?(File.expand_path(CREDS_CONFIG_PATH))
     end
 
     def opsworks_config
