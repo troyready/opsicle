@@ -85,6 +85,12 @@ module Opsicle
       return shared_credentials
     end
 
+    def get_sts_client(access_key_id, secret_access_key)
+      Aws::STS::Client.new(access_key_id: access_key_id,
+                           secret_access_key: secret_access_key,
+                           region: 'us-east-1')
+    end
+
     def get_session(mfa_token, mfa_serial_number, access_key_id, secret_access_key)
       return @session if @session
       sts = Aws::STS::Client.new(access_key_id: access_key_id,
