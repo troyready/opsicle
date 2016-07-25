@@ -37,6 +37,11 @@ module Opsicle
       env_config
     end
 
+     def get_mfa_token
+      return @token if @token
+      @token = Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
+    end
+
     # We want all ouf our YAML loaded keys to be symbols
     # taken from http://devblog.avdi.org/2009/07/14/recursively-symbolize-keys/
     def symbolize_keys(hash)
@@ -64,9 +69,8 @@ module Opsicle
        # if user doesn't have MFA enabled, then this loop won't even execute
       iam.list_mfa_devices.mfa_devices.each do |mfadevice|
         mfa_serial_number = mfadevice.serial_number
-        mfa_token = Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
-        session_credentials_hash = get_session(mfa_token,
-                                               mfa_serial_number,
+        get_mfa_token
+        session_credentials_hash = get_session(mfa_serial_number,
                                                shared_credentials.credentials.access_key_id,
                                                shared_credentials.credentials.secret_access_key).credentials
 
@@ -79,20 +83,14 @@ module Opsicle
       return shared_credentials
     end
 
-    def get_sts_client(access_key_id, secret_access_key)
-      Aws::STS::Client.new(access_key_id: access_key_id,
-                           secret_access_key: secret_access_key,
-                           region: 'us-east-1')
-    end
-
-    def get_session(mfa_token, mfa_serial_number, access_key_id, secret_access_key)
+    def get_session(mfa_serial_number, access_key_id, secret_access_key)
       return @session if @session
       sts = Aws::STS::Client.new(access_key_id: access_key_id,
                                  secret_access_key: secret_access_key,
                                  region: 'us-east-1')
       @session = sts.get_session_token(duration_seconds: SESSION_DURATION,
                                        serial_number: mfa_serial_number,
-                                       token_code: mfa_token)
+                                       token_code: @token)
     end
 
     MissingConfig = Class.new(StandardError)
