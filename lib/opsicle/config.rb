@@ -37,7 +37,7 @@ module Opsicle
       env_config
     end
 
-     def get_mfa_token
+    def get_mfa_token
       return @token if @token
       @token = Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
     end
