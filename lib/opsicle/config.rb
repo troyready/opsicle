@@ -14,11 +14,7 @@ module Opsicle
     end
 
     def aws_credentials
-      if File.exist?(File.expand_path(CREDS_CONFIG_PATH))
-        authenticate_with_credentials
-      else
-        abort('Opsicle can no longer authenticate through your ~/.fog file. Please run `opsicle legacy-credential-converter` before proceeding.')
-      end
+      authenticate_with_credentials
     end
 
     def opsworks_config
@@ -60,8 +56,13 @@ module Opsicle
     end
 
     def authenticate_with_credentials
-      shared_credentials = Aws::SharedCredentials.new(profile_name: @environment.to_s)
-      Aws.config.update({region: 'us-east-1', credentials: shared_credentials})
+      credentials = Aws::SharedCredentials.new(profile_name: @environment.to_s)
+
+      unless credentials.set?
+        abort('Opsicle can no longer authenticate through your ~/.fog file. Please run `opsicle legacy-credential-converter` before proceeding.')
+      end
+
+      Aws.config.update({region: 'us-east-1', credentials: credentials})
 
       iam = Aws::IAM::Client.new
 
@@ -71,16 +72,15 @@ module Opsicle
         mfa_serial_number = mfadevice.serial_number
         get_mfa_token
         session_credentials_hash = get_session(mfa_serial_number,
-                                               shared_credentials.credentials.access_key_id,
-                                               shared_credentials.credentials.secret_access_key).credentials
+                                               credentials.credentials.access_key_id,
+                                               credentials.credentials.secret_access_key).credentials
 
-        session_credentials = Aws::Credentials.new(session_credentials_hash.access_key_id,
+        credentials = Aws::Credentials.new(session_credentials_hash.access_key_id,
                                                    session_credentials_hash.secret_access_key,
                                                    session_credentials_hash.session_token)
-        return session_credentials
       end
 
-      return shared_credentials
+      return credentials
     end
 
     def get_session(mfa_serial_number, access_key_id, secret_access_key)
