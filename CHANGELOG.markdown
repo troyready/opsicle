@@ -1,3 +1,8 @@
+#### v2.0.0
+* Adding configuration for authenticating to AWS through credentials file
+
+  > Emma Sax: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/100
+
 #### v1.1.1
 * Fix bug with failure-log command
 
