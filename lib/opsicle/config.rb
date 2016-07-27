@@ -4,7 +4,6 @@ require 'aws-sdk'
 module Opsicle
   class Config
     OPSICLE_CONFIG_PATH = './.opsicle'
-    CREDS_CONFIG_PATH = '~/.aws/credentials'
     SESSION_DURATION = 3600
 
     attr_reader :environment
