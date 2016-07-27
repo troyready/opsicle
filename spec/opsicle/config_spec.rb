@@ -31,6 +31,7 @@ module Opsicle
           client = double('iam_client', list_mfa_devices: mfa_devices)
           allow(Aws::IAM::Client).to receive(:new).and_return(client)
           coffee_types = {:coffee => "cappuccino", :beans => "arabica"}
+          allow(coffee_types).to receive('set?').and_return(true)
           allow(Aws.config).to receive(:update).with({region: 'us-east-1', credentials: coffee_types})
           allow(Aws::SharedCredentials).to receive(:new).and_return(coffee_types)
           expect(subject.aws_credentials).to eq(coffee_types)
