@@ -67,16 +67,18 @@ module Opsicle
 
        # this will be an array of 0 or 1 because iam.list_mfa_devices.mfa_devices will only return 0 or 1 device per user;
        # if user doesn't have MFA enabled, then this loop won't even execute
-      iam.list_mfa_devices.mfa_devices.each do |mfadevice|
-        mfa_serial_number = mfadevice.serial_number
-        get_mfa_token
-        session_credentials_hash = get_session(mfa_serial_number,
-                                               credentials.credentials.access_key_id,
-                                               credentials.credentials.secret_access_key).credentials
+      if $use_mfa
+        iam.list_mfa_devices.mfa_devices.each do |mfadevice|
+          mfa_serial_number = mfadevice.serial_number
+          get_mfa_token
+          session_credentials_hash = get_session(mfa_serial_number,
+                                                 credentials.credentials.access_key_id,
+                                                 credentials.credentials.secret_access_key).credentials
 
-        credentials = Aws::Credentials.new(session_credentials_hash.access_key_id,
-                                                   session_credentials_hash.secret_access_key,
-                                                   session_credentials_hash.session_token)
+          credentials = Aws::Credentials.new(session_credentials_hash.access_key_id,
+                                                     session_credentials_hash.secret_access_key,
+                                                     session_credentials_hash.session_token)
+        end
       end
 
       return credentials

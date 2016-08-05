@@ -21,11 +21,13 @@ DOCUMENTATION
 switch :verbose, :desc => 'Enable Verbose mode for more logging', :negatable => false
 switch :debug, :desc => 'Enable Debug mode for detailed logs and backtraces', :negatable => false
 switch :color, :desc => 'Use colored output', :default_value => true
+swtich :mfa, :desc => 'Use MFA for this command (some AWS operations will fail without it based on policy)', :negatable => false
 
 pre do |global_options, command, options, args|
   $verbose = global_options[:verbose]
   $debug = global_options[:debug]
   $color = global_options[:color]
+  $use_mfa = global_options[:mfa]
   ENV['GLI_DEBUG'] = $debug.to_s
   true
 end
