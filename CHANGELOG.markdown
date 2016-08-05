@@ -1,3 +1,8 @@
+#### v2.0.1
+* Only prompt for MFA if requested by the user
+
+  > Matt Krieger: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/105
+
 #### v2.0.0
 * Adding configuration for authenticating to AWS through credentials file
 
