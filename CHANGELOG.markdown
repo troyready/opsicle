@@ -1,3 +1,8 @@
+#### v2.0.2
+* Make new directory for credentials file if it doesn't already exist
+
+  > Emma Sax: Andy Fleener: https://github.com/sportngin/opsicle/pull/104
+
 #### v2.0.1
 * Only prompt for MFA if requested by the user
 
