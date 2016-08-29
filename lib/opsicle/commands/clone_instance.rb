@@ -60,7 +60,7 @@ module Opsicle
         
       puts "\nAutomatically generated hostname: #{new_instance_hostname}\n"
       rewriting = @cli.ask("Do you wish to rewrite this hostname?\n1) Yes\n2) No", Integer)
-      
+
       if rewriting == 1
         new_instance_hostname = @cli.ask("Please write in the new instance's hostname and press ENTER:")
       end
@@ -69,13 +69,13 @@ module Opsicle
     end
 
     def increment_hostname(hostname, all_hostnames)
-      until hostname_is_unique(hostname, all_hostnames) do
+      until hostname_unique?(hostname, all_hostnames) do
         hostname = hostname.gsub(/(\d\d\z)/) { "#{($1.to_i + 1).to_s.rjust(2, '0')}"}
       end
       hostname
     end
 
-    def hostname_is_unique(hostname, all_hostnames)
+    def hostname_unique?(hostname, all_hostnames)
       !all_hostnames.include?(hostname)
     end
 
