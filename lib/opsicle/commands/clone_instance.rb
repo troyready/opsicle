@@ -41,9 +41,7 @@ module Opsicle
 
     def clone_instance(all_instances, all_hostnames, instance_index, options)
       old_instance = all_instances.instances[instance_index]
-
       new_instance_hostname = make_new_hostname(old_instance.hostname, all_hostnames)
-
       puts "\nWe will make a new instance with hostname: #{new_instance_hostname}"
 
       options[:ami] ? ami_id = options[:ami] : ami_id = old_instance.ami_id
@@ -61,8 +59,8 @@ module Opsicle
       end
         
       puts "\nAutomatically generated hostname: #{new_instance_hostname}\n"
-
       rewriting = @cli.ask("Do you wish to rewrite this hostname?\n1) Yes\n2) No", Integer)
+      
       if rewriting == 1
         new_instance_hostname = @cli.ask("Please write in the new instance's hostname and press ENTER:")
       end
