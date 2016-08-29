@@ -19,9 +19,8 @@ module Opsicle
       instance_indices_list = select_instances(layer_id)
 
       instance_indices_list.each do |instance_index|
-        clone_instance(instance_index)
+        clone_instance(all_instances, all_hostnames, instance_index, options)
       end
-
     end
 
     def select_layer
@@ -40,13 +39,25 @@ module Opsicle
       instance_indices_list.map! { |instance_index| instance_index.to_i - 1 }
     end
 
-    def clone_instance(instance_index)
+    def clone_instance(all_instances, all_hostnames, instance_index, options)
       old_instance = all_instances.instances[instance_index]
 
-      if old_instance.hostname =~ /\d/
-        new_instance_hostname = increment_hostname(old_instance.hostname, all_hostnames)
+      new_instance_hostname = make_new_hostname(old_instance.hostname, all_hostnames)
+
+      puts "\nWe will make a new instance with hostname: #{new_instance_hostname}"
+
+      options[:ami] ? ami_id = options[:ami] : ami_id = old_instance.ami_id
+      options[:instance_type] ? instance_type = options[:instance_type] : instance_type = old_instance.instance_type
+      options[:agent_version] ? agent_version = options[:agent_version] : agent_version = old_instance.agent_version
+
+      create_new_instance(old_instance, instance_type, new_instance_hostname, ami_id, agent_version)
+    end
+
+    def make_new_hostname(old_hostname, all_hostnames)
+      if old_hostname =~ /\d/
+        new_instance_hostname = increment_hostname(old_hostname, all_hostnames)
       else
-        new_instance_hostname = old_instance.hostname << "_clone"
+        new_instance_hostname = old_hostname << "_clone"
       end
         
       puts "\nAutomatically generated hostname: #{new_instance_hostname}\n"
@@ -56,13 +67,7 @@ module Opsicle
         new_instance_hostname = @cli.ask("Please write in the new instance's hostname and press ENTER:")
       end
 
-      puts "\nWe will make a new instance with hostname: #{new_instance_hostname}"
-
-      options[:ami] ? ami_id = options[:ami] : ami_id = old_instance.ami_id
-      options[:instance_type] ? instance_type = options[:instance_type] : instance_type = old_instance.instance_type
-      options[:agent_version] ? agent_version = options[:agent_version] : agent_version = old_instance.agent_version
-
-      create_new_instance(old_instance, instance_type, new_instance_hostname, ami_id, agent_version)
+      new_instance_hostname
     end
 
     def increment_hostname(hostname, all_hostnames)
