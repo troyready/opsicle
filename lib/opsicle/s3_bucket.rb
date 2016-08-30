@@ -2,17 +2,17 @@ require 'pathname'
 
 module Opsicle
   class S3Bucket
-     attr_reader :bucket
+    attr_reader :bucket
 
-     def initialize(client, bucket_name)
-        @bucket = client.s3.buckets[bucket_name]
-        raise UnknownBucket unless @bucket.exists?
-     end
+    def initialize(client, bucket_name)
+      @bucket = Aws::S3::Bucket.new(name: bucket_name, client: client.s3)
+      raise UnknownBucket unless @bucket.exists?
+    end
 
-     def update(object)
-       obj = bucket.objects[object]
-       obj.write(Pathname.new(object))
-     end
+    def update(object)
+      obj = bucket.object(object)
+      obj.upload_file(Pathname.new(object))
+    end
   end
 
   UnknownBucket = Class.new(StandardError)
