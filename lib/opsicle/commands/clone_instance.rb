@@ -52,7 +52,7 @@ module Opsicle
     end
 
     def make_new_hostname(old_hostname, all_hostnames)
-      if old_hostname =~ /\d/
+      if old_hostname =~ /\d\d\z/
         new_instance_hostname = increment_hostname(old_hostname, all_hostnames)
       else
         new_instance_hostname = old_hostname << "_clone"
@@ -70,7 +70,7 @@ module Opsicle
 
     def increment_hostname(hostname, all_hostnames)
       until hostname_unique?(hostname, all_hostnames) do
-        hostname = hostname.gsub(/(\d\d\z)/) { "#{($1.to_i + 1).to_s.rjust(2, '0')}"}
+        hostname = hostname.gsub(/(\d\d\z)/) { "#{($1.to_i + 1).to_s.rjust(2, '0')}" }
       end
       hostname
     end
