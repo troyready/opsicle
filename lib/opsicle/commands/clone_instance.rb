@@ -34,7 +34,8 @@ module Opsicle
     def select_instances(instances)
       puts "\nInstances:\n"
       instances.instances.each_with_index {|instance, index| puts "#{index.to_i + 1}) #{instance.status} - #{instance.hostname}" }
-      instance_indices_list = @cli.ask("Instances? (enter as a comma separated list)\n", lambda { |str| str.split(/,\s*/) })
+      instance_indices_string = @cli.ask("Instances? (enter as a comma separated list)\n", String)
+      instance_indices_list = instance_indices_string.split(/,\s*/)
       instance_indices_list.map! { |instance_index| instance_index.to_i - 1 }
     end
 
