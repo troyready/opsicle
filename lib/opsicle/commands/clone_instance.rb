@@ -14,9 +14,9 @@ module Opsicle
     def execute(options={})
       puts "Stack ID = #{@stack_id}"
       layer_id = select_layer
-      all_instances = @opsworks.describe_instances({:layer_id => layer_id}).data
-      all_hostnames = all_instances[:instances].collect { |instance| instance.hostname }
-      instance_indices_list = select_instances(layer_id)
+      all_instances = @opsworks.describe_instances({:layer_id => layer_id})
+      all_hostnames = all_instances.instances.collect { |instance| instance.hostname }
+      instance_indices_list = select_instances(all_instances)
 
       instance_indices_list.each do |instance_index|
         clone_instance(all_instances, all_hostnames, instance_index, options)
@@ -25,16 +25,15 @@ module Opsicle
 
     def select_layer
       puts "\nLayers:\n"
-      layers = @opsworks.describe_layers({ :stack_id => @stack_id }).data
-      layers[:layers].each_with_index {|layer, index| puts "#{index.to_i + 1}) #{layer.name}"}
-      layer_index = @cli.ask("Layer?\n", Integer) { |q| q.in = 1..layers[:layers].length.to_i } - 1
+      layers = @opsworks.describe_layers({ :stack_id => @stack_id })
+      layers.layers.each_with_index {|layer, index| puts "#{index.to_i + 1}) #{layer.name}"}
+      layer_index = @cli.ask("Layer?\n", Integer) { |q| q.in = 1..layers.layers.length.to_i } - 1
       layers.layers[layer_index].layer_id
     end
 
-    def select_instances(layer_id)
+    def select_instances(instances)
       puts "\nInstances:\n"
-      instances = @opsworks.describe_instances({ :layer_id => layer_id }).data
-      instances[:instances].each_with_index {|instance, index| puts "#{index.to_i + 1}) #{instance.status} - #{instance.hostname}" }
+      instances.instances.each_with_index {|instance, index| puts "#{index.to_i + 1}) #{instance.status} - #{instance.hostname}" }
       instance_indices_list = @cli.ask("Instances? (enter as a comma separated list)\n", lambda { |str| str.split(/,\s*/) })
       instance_indices_list.map! { |instance_index| instance_index.to_i - 1 }
     end
