@@ -69,26 +69,26 @@ module Opsicle
     end
 
     def create_new_instance(new_instance_hostname, instance_type, ami_id, agent_version)
-      # new_instance = @opsworks.create_instance({
-      #   stack_id: self.stack_id, # required
-      #   layer_ids: self.layer_ids, # required
-      #   instance_type: instance_type, # required
-      #   auto_scaling_type: self.auto_scaling_type, # accepts load, timer
-      #   hostname: new_instance_hostname,
-      #   os: self.os,
-      #   ami_id: ami_id,
-      #   ssh_key_name: self.ssh_key_name,
-      #   availability_zone: self.availability_zone,
-      #   virtualization_type: self.virtualization_type,
-      #   subnet_id: self.subnet_id,
-      #   architecture: self.architecture, # accepts x86_64, i386
-      #   root_device_type: self.root_device_type, # accepts ebs, instance-store
-      #   install_updates_on_boot: self.install_updates_on_boot,
-      #   #ebs_optimized: self.ebs_optimized,
-      #   agent_version: agent_version,
-      #   tenancy: self.tenancy,
-      # })
-      # puts "New instance is created: #{new_instance.instance_id}"
+      new_instance = @opsworks.create_instance({
+        stack_id: self.stack_id, # required
+        layer_ids: self.layer_ids, # required
+        instance_type: instance_type, # required
+        auto_scaling_type: self.auto_scaling_type, # accepts load, timer
+        hostname: new_instance_hostname,
+        os: self.os,
+        ami_id: ami_id,
+        ssh_key_name: self.ssh_key_name,
+        availability_zone: self.availability_zone,
+        virtualization_type: self.virtualization_type,
+        subnet_id: self.subnet_id,
+        architecture: self.architecture, # accepts x86_64, i386
+        root_device_type: self.root_device_type, # accepts ebs, instance-store
+        install_updates_on_boot: self.install_updates_on_boot,
+        #ebs_optimized: self.ebs_optimized,
+        agent_version: agent_version,
+        tenancy: self.tenancy,
+      })
+      puts "New instance is created: #{new_instance.instance_id}"
     end
   end
 end

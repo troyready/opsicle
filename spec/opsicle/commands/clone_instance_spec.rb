@@ -83,66 +83,6 @@ module Opsicle
       end
     end
 
-    # context "#make_new_hostname" do
-    #   it "should list instances" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(clone).to receive(:increment_hostname).and_return('example-hostname-03')
-    #     clone.make_new_hostname('example-hostname-01', ['example-hostname-01', 'example-hostname-02'])
-    #   end
-    # end
-
-    # context "#increment_hostname" do
-    #   it "should increment the hostname" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(clone).to receive(:hostname_unique?).and_return(true)
-    #     clone.increment_hostname('example-hostname-01', ['example-hostname-01', 'example-hostname-02'])
-    #   end
-    # end
-
-    # context "#clone_instance" do
-    #   it "should grab instances and make new hostname" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(@instances).to receive(:instances)
-    #     expect(clone).to receive(:make_new_hostname).and_return('example-hostname-03')
-    #     clone.clone_instance(@instances, ['example-hostname-01', 'example-hostname-02'], 1, {})
-    #   end
-
-    #   it "should get information from old instance" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(@instance2).to receive(:ami_id)
-    #     expect(@instance2).to receive(:instance_type)
-    #     expect(@instance2).to receive(:agent_version)
-    #     clone.clone_instance(@instances, ['example-hostname-01', 'example-hostname-02'], 1, {})
-    #   end
-
-    #   it "should create new instance" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(clone).to receive(:create_new_instance).and_return(true)
-    #     clone.clone_instance(@instances, ['example-hostname-01', 'example-hostname-02'], 1, {})
-    #   end
-    # end
-
-    # context "#create_new_instance" do
-    #   it "should create an instance" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(@opsworks).to receive(:create_instance).and_return(@new_instance)
-    #     clone.create_new_instance(@instance2, 'instance_type', 'hostname', 'ami_id', 'agent_version')
-    #   end
-
-    #   it "should take information from old instance" do
-    #     clone = CloneInstance.new(:environment)
-    #     expect(@instance2).to receive(:stack_id)
-    #     expect(@instance2).to receive(:layer_ids)
-    #     expect(@instance2).to receive(:auto_scaling_type)
-    #     expect(@instance2).to receive(:os)
-    #     expect(@instance2).to receive(:ssh_key_name)
-    #     expect(@instance2).to receive(:availability_zone)
-    #     expect(@instance2).to receive(:virtualization_type)
-    #     expect(@instance2).to receive(:subnet_id)
-    #     clone.create_new_instance(@instance2, 'instance_type', 'hostname', 'ami_id', 'agent_version')
-    #   end
-    # end
-
     context "#client" do
       it "generates a new AWS client from the given configs" do
         @config = double('config', :opsworks_config => {:stack_id => 1234567890})
