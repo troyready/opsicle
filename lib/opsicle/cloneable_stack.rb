@@ -9,7 +9,7 @@ module Opsicle
     end
 
     def get_stack
-      @opsworks.describe_stacks({ :stack_ids => [self.id.to_s] }).stacks
+      @opsworks.describe_stacks({ :stack_ids => [self.id.to_s] }).stacks.first
     end
   end
 end

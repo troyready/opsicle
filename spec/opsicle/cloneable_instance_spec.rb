@@ -18,12 +18,7 @@ module Opsicle
       @layer = double('layer1', :name => 'layer-1', :layer_id => 12345, :instances => [@instance])
       @new_instance = double('new_instance', :instance_id => 1029384756)
       @opsworks = double('opsworks', :create_instance => @new_instance)
-
       @cli = double('cli', :ask => 2)
-      allow_any_instance_of(HighLine).to receive(:ask).with("Layer?\n", Integer).and_return(2)
-      allow_any_instance_of(HighLine).to receive(:ask).with("Instances? (enter as a comma separated list)\n", String).and_return('2')
-      allow_any_instance_of(HighLine).to receive(:ask).with("Do you wish to rewrite this hostname?\n1) Yes\n2) No", Integer).and_return(2)
-      allow_any_instance_of(HighLine).to receive(:ask).with("Please write in the new instance's hostname and press ENTER:").and_return('example-hostname')
     end
 
     context "#make_new_hostname" do

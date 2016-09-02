@@ -25,27 +25,18 @@ module Opsicle
                                        :root_device_type => 'root_device_type', :install_updates_on_boot => 'install_updates_on_boot',
                                        :ebs_optimized => 'ebs_optimized', :tenancy => 'tenancy')
       @instances = double('instances', :instances => [@instance1, @instance2])
-      allow(@instances).to receive(:each_with_index)
-      allow(@instances).to receive(:[]).and_return(@instance1)
-        
-      @layer1 = double('layer1', :name => 'layer-1', :layer_id => 12345)
-      @layer2 = double('layer2', :name => 'layer-2', :layer_id => 67890)
+      @layer1 = double('layer1', :name => 'layer-1', :layer_id => 12345, :instances => [@instance1, @instance2])
+      @layer2 = double('layer2', :name => 'layer-2', :layer_id => 67890, :instances => [@instance1, @instance2])
       @layers = double('layers', :layers => [@layer1, @layer2])
-        
       @new_instance = double('new_instance', :instance_id => 1029384756)
-
-      @stacks = double('stack', :stacks => true)
-        
-      @opsworks = double('opsworks', :describe_instances => @instances,
-                                     :describe_layers => @layers,
-                                     :create_instance => @new_instance,
-                                     :describe_stacks => @stacks)
+      @stack = double('stack')
+      @stacks = double('stacks', :stacks => [@stack])
+      @opsworks = double('opsworks', :describe_instances => @instances, :describe_layers => @layers,
+                                     :create_instance => @new_instance, :describe_stacks => @stacks)
       @config = double('config', :opsworks_config => {:stack_id => 1234567890})
-      @client = double('client', :config => @config,
-                                 :opsworks => @opsworks)
-        
+      @client = double('client', :config => @config, :opsworks => @opsworks)
       allow(Client).to receive(:new).with(:environment).and_return(@client)
-
+      allow(@instances).to receive(:each_with_index)
       allow_any_instance_of(HighLine).to receive(:ask).with("Layer?\n", Integer).and_return(2)
       allow_any_instance_of(HighLine).to receive(:ask).with("Instances? (enter as a comma separated list)\n", String).and_return('2')
       allow_any_instance_of(HighLine).to receive(:ask).with("Do you wish to rewrite this hostname?\n1) Yes\n2) No", Integer).and_return(2)
