@@ -1,3 +1,8 @@
+#### v2.1.0
+* Clone instances
+
+  > Mykola, Emma Sax: Brian Bergstrom, Andy Fleener: https://github.com/sportngin/opsicle/pull/95
+
 #### v2.0.2
 * Make new directory for credentials file if it doesn't already exist
 
