@@ -24,16 +24,16 @@ production:
   app_id: opsworks-app-id
 ```
 
-```yaml
-# ~/.fog
+Opsicle v2+ uses AWS SDK shared credentials.  See: https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
+```ini
+# ~/.aws/credentials
 
-staging:
+[staging]
+  aws_access_key_id = YOUR_AWS_ACCESS_KEY
+  aws_secret_access_key = YOUR_AWS_SECRET_ACCESS_KEY
+[production]
   aws_access_key_id: YOUR_AWS_ACCESS_KEY
-  aws_secret_access_key: YOUR_AWS_SECRET_ACCESS_KEY
-production:
-  aws_access_key_id: YOUR_AWS_ACCESS_KEY
-  aws_secret_access_key: YOUR_AWS_SECRET_ACCESS_KEY
-  mfa_serial_number: YOUR_MFA_ID
+  aws_secret_access_key = YOUR_AWS_SECRET_ACCESS_KEY
 ```
 
 ## Using Opsicle
