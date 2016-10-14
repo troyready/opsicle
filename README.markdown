@@ -22,6 +22,10 @@ staging:
 production:
   stack_id: opsworks-stack-id
   app_id: opsworks-app-id
+production2:
+  stack_id: opsworks-stack-id
+  app_id: opsworks-app-id
+  profile_name: production
 ```
 
 Opsicle v2+ uses AWS SDK shared credentials.  See: https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
