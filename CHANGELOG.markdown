@@ -1,3 +1,8 @@
+#### v2.2.0
+* Support for configurable aws credentials profile name
+
+  > Brian Bergstrom: : https://github.com/sportngin/opsicle/pull/108
+
 #### v2.1.0
 * Clone instances
 
