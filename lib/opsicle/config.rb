@@ -20,6 +20,10 @@ module Opsicle
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
+    def opsworks_region
+      opsworks_config[:region] || "us-east-1"
+    end
+
     def configure_aws_environment!(environment)
       @environment = environment.to_sym
     end
