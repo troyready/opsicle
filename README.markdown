@@ -26,6 +26,7 @@ production2:
   stack_id: opsworks-stack-id
   app_id: opsworks-app-id
   profile_name: production
+  region: us-west-2
 ```
 
 Opsicle v2+ uses AWS SDK shared credentials.  See: https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
@@ -93,11 +94,11 @@ opsicle monitor staging
 ```bash
  # Upload a cookbooks directory to S3 and update the stack's custom cookbooks
  opsicle chef-update staging --bucket-name my-opsworks-cookbooks
- 
+
 ```
 This command accepts a --path argument to the directory of cookbooks to upload. It defaults to 'cookbooks'.
 It also accepts a --bucket-name for the base s3 bucket. This flag is required.
- 
+
 ### Update
 Update an OpsWorks resource like a stack, layer or app with a given set of property values.
 The values can be passed as inline JSON or as a path to a YAML file.
