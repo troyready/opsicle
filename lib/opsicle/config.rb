@@ -61,12 +61,13 @@ module Opsicle
     def authenticate_with_credentials
       profile_name = opsworks_config[:profile_name] || @environment.to_s
       credentials = Aws::SharedCredentials.new(profile_name: profile_name)
+      region = opsworks_region
 
       unless credentials.set?
         abort('Opsicle can no longer authenticate through your ~/.fog file. Please run `opsicle legacy-credential-converter` before proceeding.')
       end
 
-      Aws.config.update({region: 'us-east-1', credentials: credentials})
+      Aws.config.update({region: region, credentials: credentials})
 
       iam = Aws::IAM::Client.new
 
