@@ -1,3 +1,8 @@
+#### v2.2.1
+* Regional Endpoints
+
+  > Mykola: Unknown User, Andy Fleener: https://github.com/sportngin/opsicle/pull/111
+
 #### v2.2.0
 * Support for configurable aws credentials profile name
 
