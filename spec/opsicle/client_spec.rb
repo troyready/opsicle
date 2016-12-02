@@ -10,6 +10,7 @@ module Opsicle
       mock_keys = {access_key_id: 'key', secret_access_key: 'secret'}
       allow(config).to receive(:aws_credentials).and_return(mock_keys)
       allow(config).to receive(:opsworks_config).and_return({ stack_id: 'stack', app_id: 'app', something_else: 'true' })
+      allow(config).to receive(:opsworks_region).and_return('us-east-1')
       allow(Config).to receive(:new).and_return(config)
       allow(Config).to receive(:instance).and_return(config)
       allow(Aws::OpsWorks::Client).to receive(:new).and_return(aws_client)

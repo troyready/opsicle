@@ -10,8 +10,9 @@ module Opsicle
       @config = Config.instance
       @config.configure_aws_environment!(environment)
       credentials = @config.aws_credentials
-      @opsworks = Aws::OpsWorks::Client.new(region: 'us-east-1', credentials: credentials)
-      @s3 = Aws::S3::Client.new(region: 'us-east-1', credentials: credentials)
+      region = @config.opsworks_region
+      @opsworks = Aws::OpsWorks::Client.new(region: region, credentials: credentials)
+      @s3 = Aws::S3::Client.new(region: region, credentials: credentials)
     end
 
     def run_command(command, command_args={}, options={})
