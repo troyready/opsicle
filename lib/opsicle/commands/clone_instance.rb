@@ -24,6 +24,9 @@ module Opsicle
       instances_to_clone.each do |instance|
         instance.clone(options)
       end
+      
+      layer.ami_id = nil
+      layer.agent_version = nil
     end
 
     def select_layer
