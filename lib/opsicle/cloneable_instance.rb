@@ -29,6 +29,8 @@ module Opsicle
     end
 
     def clone(options)
+      puts "\nCloning an instance..."
+      
       new_instance_hostname = make_new_hostname(self.hostname)
       ami_id = verify_ami_id
       agent_version = verify_agent_version
