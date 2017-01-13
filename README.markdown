@@ -22,18 +22,23 @@ staging:
 production:
   stack_id: opsworks-stack-id
   app_id: opsworks-app-id
+production2:
+  stack_id: opsworks-stack-id
+  app_id: opsworks-app-id
+  profile_name: production
+  region: us-west-2
 ```
 
-```yaml
-# ~/.fog
+Opsicle v2+ uses AWS SDK shared credentials.  See: https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/
+```ini
+# ~/.aws/credentials
 
-staging:
+[staging]
+  aws_access_key_id = YOUR_AWS_ACCESS_KEY
+  aws_secret_access_key = YOUR_AWS_SECRET_ACCESS_KEY
+[production]
   aws_access_key_id: YOUR_AWS_ACCESS_KEY
-  aws_secret_access_key: YOUR_AWS_SECRET_ACCESS_KEY
-production:
-  aws_access_key_id: YOUR_AWS_ACCESS_KEY
-  aws_secret_access_key: YOUR_AWS_SECRET_ACCESS_KEY
-  mfa_serial_number: YOUR_MFA_ID
+  aws_secret_access_key = YOUR_AWS_SECRET_ACCESS_KEY
 ```
 
 ## Using Opsicle
@@ -59,6 +64,16 @@ By default, deploying opens the Opsicle Stack Monitor.
 You may also use `--browser` to open the OpsWorks deployments screen instead,
 or `--no-monitor` to ignore both monitoring options
 
+### Failure-log
+```bash
+
+# Get the failure log from a deployment for the current app
+opsicle failure-log staging
+```
+
+This will open a browser window the failure log from the most recent failure log from
+a deployment in the current app.
+
 ### SSH
 ```bash
 # SSH to a server instance in the given environment stack
@@ -79,11 +94,11 @@ opsicle monitor staging
 ```bash
  # Upload a cookbooks directory to S3 and update the stack's custom cookbooks
  opsicle chef-update staging --bucket-name my-opsworks-cookbooks
- 
+
 ```
 This command accepts a --path argument to the directory of cookbooks to upload. It defaults to 'cookbooks'.
 It also accepts a --bucket-name for the base s3 bucket. This flag is required.
- 
+
 ### Update
 Update an OpsWorks resource like a stack, layer or app with a given set of property values.
 The values can be passed as inline JSON or as a path to a YAML file.

@@ -1,3 +1,3 @@
 module Opsicle
-  VERSION = "0.18.1"
+  VERSION = "2.2.1"
 end

@@ -7,16 +7,22 @@ module Opsicle
     let(:aws_client) { double }
     let(:config) { double }
     before do
-      ow_stub = double
+      mock_keys = {access_key_id: 'key', secret_access_key: 'secret'}
+      allow(config).to receive(:aws_credentials).and_return(mock_keys)
       allow(config).to receive(:opsworks_config).and_return({ stack_id: 'stack', app_id: 'app', something_else: 'true' })
-      allow(ow_stub).to receive(:client).and_return(aws_client)
+      allow(config).to receive(:opsworks_region).and_return('us-east-1')
       allow(Config).to receive(:new).and_return(config)
-      allow(AWS::OpsWorks).to receive(:new).and_return(ow_stub)
+      allow(Config).to receive(:instance).and_return(config)
+      allow(Aws::OpsWorks::Client).to receive(:new).and_return(aws_client)
+      allow(Aws::S3::Client).to receive(:new).and_return(aws_client)
+      allow(config).to receive(:configure_aws_environment!).with("derp")
+      allow(aws_client).to receive(:configure_aws_environment!).with("derp")
+      allow(subject).to receive(:configure_aws_environment!).with("derp")
+      allow(Client).to receive(:configure_aws_environment!).with("derp")
     end
 
     context "#run_command" do
       it "calls out to the aws client with all the config options" do
-        expect(config).to receive(:configure_aws!)
         expect(aws_client).to receive(:create_deployment).with(
           hash_including(
             command: { name: 'deploy', args: {} },
@@ -27,7 +33,6 @@ module Opsicle
         subject.run_command('deploy')
       end
       it "removes extra options from the opsworks config" do
-        expect(config).to receive(:configure_aws!)
         expect(aws_client).to receive(:create_deployment).with(hash_excluding(:something_else))
         subject.run_command('deploy')
       end

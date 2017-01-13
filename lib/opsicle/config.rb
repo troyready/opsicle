@@ -3,36 +3,29 @@ require 'aws-sdk'
 
 module Opsicle
   class Config
-    FOG_CONFIG_PATH = '~/.fog'
     OPSICLE_CONFIG_PATH = './.opsicle'
     SESSION_DURATION = 3600
 
     attr_reader :environment
 
-    def initialize(environment)
-      @environment = environment.to_sym
+    def self.instance
+      @instance ||= new
     end
 
-    def aws_config
-      return @aws_config if @aws_config
-      if fog_config[:mfa_serial_number]
-        @aws_config = get_session.credentials
-      else
-        @aws_config = { access_key_id: fog_config[:aws_access_key_id], secret_access_key: fog_config[:aws_secret_access_key] }
-      end
-    end
-
-    def fog_config
-      return @fog_config if @fog_config
-      @fog_config = load_config(File.expand_path(FOG_CONFIG_PATH))
+    def aws_credentials
+      authenticate_with_credentials
     end
 
     def opsworks_config
       @opsworks_config ||= load_config(OPSICLE_CONFIG_PATH)
     end
 
-    def configure_aws!
-      AWS.config(aws_config)
+    def opsworks_region
+      opsworks_config[:region] || "us-east-1"
+    end
+
+    def configure_aws_environment!(environment)
+      @environment = environment.to_sym
     end
 
     def load_config(file)
@@ -44,20 +37,8 @@ module Opsicle
     end
 
     def get_mfa_token
-      Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
-    end
-
-    def get_session
-      return @session if @session
-      sts = AWS::STS.new(access_key_id: fog_config[:aws_access_key_id],
-                           secret_access_key: fog_config[:aws_secret_access_key])
-      @session = sts.new_session(duration: session_duration, serial_number: fog_config[:mfa_serial_number],
-                                 token_code: get_mfa_token)
-    end
-
-    def session_duration
-      fog_config = load_config(File.expand_path(FOG_CONFIG_PATH))
-      fog_config[:session_duration] || SESSION_DURATION
+      return @token if @token
+      @token = Output.ask("Enter MFA token: "){ |q|  q.validate = /^\d{6}$/ }
     end
 
     # We want all ouf our YAML loaded keys to be symbols
@@ -75,6 +56,48 @@ module Opsicle
         result[new_key] = new_value
         result
       }
+    end
+
+    def authenticate_with_credentials
+      profile_name = opsworks_config[:profile_name] || @environment.to_s
+      credentials = Aws::SharedCredentials.new(profile_name: profile_name)
+      region = opsworks_region
+
+      unless credentials.set?
+        abort('Opsicle can no longer authenticate through your ~/.fog file. Please run `opsicle legacy-credential-converter` before proceeding.')
+      end
+
+      Aws.config.update({region: region, credentials: credentials})
+
+      iam = Aws::IAM::Client.new
+
+       # this will be an array of 0 or 1 because iam.list_mfa_devices.mfa_devices will only return 0 or 1 device per user;
+       # if user doesn't have MFA enabled, then this loop won't even execute
+      if $use_mfa
+        iam.list_mfa_devices.mfa_devices.each do |mfadevice|
+          mfa_serial_number = mfadevice.serial_number
+          get_mfa_token
+          session_credentials_hash = get_session(mfa_serial_number,
+                                                 credentials.credentials.access_key_id,
+                                                 credentials.credentials.secret_access_key).credentials
+
+          credentials = Aws::Credentials.new(session_credentials_hash.access_key_id,
+                                                     session_credentials_hash.secret_access_key,
+                                                     session_credentials_hash.session_token)
+        end
+      end
+
+      return credentials
+    end
+
+    def get_session(mfa_serial_number, access_key_id, secret_access_key)
+      return @session if @session
+      sts = Aws::STS::Client.new(access_key_id: access_key_id,
+                                 secret_access_key: secret_access_key,
+                                 region: 'us-east-1')
+      @session = sts.get_session_token(duration_seconds: SESSION_DURATION,
+                                       serial_number: mfa_serial_number,
+                                       token_code: @token)
     end
 
     MissingConfig = Class.new(StandardError)

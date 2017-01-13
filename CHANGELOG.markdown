@@ -1,3 +1,61 @@
+#### v2.2.1
+* Regional Endpoints
+
+  > Mykola: Unknown User, Andy Fleener: https://github.com/sportngin/opsicle/pull/111
+
+#### v2.2.0
+* Support for configurable aws credentials profile name
+
+  > Brian Bergstrom: : https://github.com/sportngin/opsicle/pull/108
+
+#### v2.1.0
+* Clone instances
+
+  > Mykola, Emma Sax: Brian Bergstrom, Andy Fleener: https://github.com/sportngin/opsicle/pull/95
+
+#### v2.0.2
+* Make new directory for credentials file if it doesn't already exist
+
+  > Emma Sax: Andy Fleener: https://github.com/sportngin/opsicle/pull/104
+
+#### v2.0.1
+* Only prompt for MFA if requested by the user
+
+  > Matt Krieger: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/105
+
+#### v2.0.0
+* Adding configuration for authenticating to AWS through credentials file
+
+  > Emma Sax: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/100
+
+#### v1.1.1
+* Fix bug with failure-log command
+
+  > Emma Sax: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/99
+
+#### v1.1.0
+* Adding command to get recent failure log from failed deployment
+
+  > Emma Sax: Chris Arcand, Brian Bergstrom: https://github.com/sportngin/opsicle/pull/97
+
+#### v1.0.1
+* Fix bug that prevents users from updating chef cookbooks on aws-sdk v2
+
+  > Emma Sax: Brian Bergstrom: https://github.com/sportngin/opsicle/pull/98
+
+#### v1.0.0
+* Simplifying legacy-credential-converter to use hash to read credentials, not regexes"
+
+  > Brian Bergstrom, newzac, Emma Sax: : https://github.com/sportngin/opsicle/pull/92
+
+* Upgrading aws-sdk to v2 from v1
+
+  > Emma Sax: Andy Fleener: https://github.com/sportngin/opsicle/pull/91
+
+* Making conversion command from .fog to .aws/credentials
+
+  > Emma Sax: Andy Fleener: https://github.com/sportngin/opsicle/pull/90
+
 #### v0.18.1
 #### v0.18.0
 #### v0.16.0
