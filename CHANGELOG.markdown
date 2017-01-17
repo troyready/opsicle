@@ -1,3 +1,8 @@
+#### v2.3.0
+* Add ability to override AMI id, agent version, and instance type when cloning an instance
+
+  > Emma Sax: Unknown User: https://github.com/sportngin/opsicle/pull/112
+
 #### v2.2.1
 * Regional Endpoints
 
