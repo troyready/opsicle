@@ -1,6 +1,6 @@
 module Opsicle
   class CloneableLayer
-    attr_accessor :name, :layer_id, :instances, :opsworks, :cli
+    attr_accessor :name, :layer_id, :instances, :opsworks, :cli, :agent_version, :ami_id
 
     def initialize(name, layer_id, opsworks, cli)
       self.name = name

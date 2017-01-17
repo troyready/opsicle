@@ -29,43 +29,87 @@ module Opsicle
     end
 
     def clone(options)
-      all_sibling_hostnames = self.layer.instances.collect { |instance| instance.hostname }
-      new_instance_hostname = make_new_hostname(self.hostname, all_sibling_hostnames)
-      puts "\nWe will make a new instance with hostname: #{new_instance_hostname}"
-
-      options[:ami] ? ami_id = options[:ami] : ami_id = self.ami_id
-      options[:instance_type] ? instance_type = options[:instance_type] : instance_type = self.instance_type
-      options[:agent_version] ? agent_version = options[:agent_version] : agent_version = self.agent_version
+      puts "\nCloning an instance..."
+      
+      new_instance_hostname = make_new_hostname(self.hostname)
+      ami_id = verify_ami_id
+      agent_version = verify_agent_version
+      instance_type = verify_instance_type
 
       create_new_instance(new_instance_hostname, instance_type, ami_id, agent_version)
     end
 
-    def make_new_hostname(old_hostname, all_hostnames)
+    def make_new_hostname(old_hostname)
+      all_sibling_hostnames = self.layer.instances.collect { |instance| instance.hostname }
+
       if old_hostname =~ /\d\d\z/
-        new_instance_hostname = increment_hostname(old_hostname, all_hostnames)
+        new_instance_hostname = increment_hostname(old_hostname, all_sibling_hostnames)
       else
         new_instance_hostname = old_hostname << "_clone"
       end
         
       puts "\nAutomatically generated hostname: #{new_instance_hostname}\n"
       rewriting = @cli.ask("Do you wish to rewrite this hostname?\n1) Yes\n2) No", Integer)
-
-      if rewriting == 1
-        new_instance_hostname = @cli.ask("Please write in the new instance's hostname and press ENTER:")
-      end
+      new_instance_hostname = @cli.ask("Please write in the new instance's hostname and press ENTER:") if rewriting == 1
 
       new_instance_hostname
     end
 
-    def increment_hostname(hostname, all_hostnames)
-      until hostname_unique?(hostname, all_hostnames) do
+    def increment_hostname(hostname, all_sibling_hostnames)
+      until hostname_unique?(hostname, all_sibling_hostnames) do
         hostname = hostname.gsub(/(\d\d\z)/) { "#{($1.to_i + 1).to_s.rjust(2, '0')}" }
       end
       hostname
     end
 
-    def hostname_unique?(hostname, all_hostnames)
-      !all_hostnames.include?(hostname)
+    def hostname_unique?(hostname, all_sibling_hostnames)
+      !all_sibling_hostnames.include?(hostname)
+    end
+
+    def verify_ami_id
+      if self.layer.ami_id
+        ami_id = self.layer.ami_id
+      else
+        puts "\nCurrent AMI id is #{self.ami_id}"
+        rewriting = @cli.ask("Do you wish to override this AMI? By overriding, you are choosing to override the current AMI for all instances you are cloning.\n1) Yes\n2) No", Integer)
+        ami_id = rewriting == 1 ? @cli.ask("Please write in the new AMI id press ENTER:") : self.ami_id
+      end
+
+      self.layer.ami_id = ami_id
+      ami_id
+    end
+
+    def verify_agent_version
+      if self.layer.agent_version
+        agent_version = self.layer.agent_version
+      else
+        puts "\nCurrent agent version is #{self.agent_version}"
+        rewriting = @cli.ask("Do you wish to override this version? By overriding, you are choosing to override the current agent version for all instances you are cloning.\n1) Yes\n2) No", Integer)
+        agent_version = rewriting == 1 ? get_new_agent_version : self.agent_version
+      end
+
+      self.layer.agent_version = agent_version
+      agent_version
+    end
+
+    def get_new_agent_version
+      agents = @opsworks.describe_agent_versions(stack_id: self.stack_id).agent_versions
+
+      version_ids = []
+      agents.each do |agent|
+        version_ids << agent.version
+      end
+
+      version_ids.each_with_index { |id, index| puts "#{index.to_i + 1}) #{id}"}
+      id_index = @cli.ask("Which agent version ID?\n", Integer) { |q| q.in = 1..version_ids.length.to_i } - 1
+      version_ids[id_index]
+    end
+
+    def verify_instance_type
+      puts "\nCurrent instance type is #{self.instance_type}"
+      rewriting = @cli.ask("Do you wish to override this instance type?\n1) Yes\n2) No", Integer)
+      instance_type = rewriting == 1 ? @cli.ask("Please write in the new instance type press ENTER:") : self.instance_type
+      instance_type
     end
 
     def create_new_instance(new_instance_hostname, instance_type, ami_id, agent_version)
@@ -88,7 +132,7 @@ module Opsicle
         agent_version: agent_version,
         tenancy: self.tenancy,
       })
-      puts "New instance is created: #{new_instance.instance_id}"
+      puts "\nNew instance has been created: #{new_instance.instance_id}"
     end
   end
 end

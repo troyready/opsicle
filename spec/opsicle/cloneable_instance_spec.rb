@@ -15,7 +15,11 @@ module Opsicle
                                        :subnet_id => 'subnet_id', :architecture => 'architecture',
                                        :root_device_type => 'root_device_type', :install_updates_on_boot => 'install_updates_on_boot',
                                        :ebs_optimized => 'ebs_optimized', :tenancy => 'tenancy')
-      @layer = double('layer1', :name => 'layer-1', :layer_id => 12345, :instances => [@instance])
+      @layer = double('layer1', :name => 'layer-1', :layer_id => 12345, :instances => [@instance], :ami_id => nil, :agent_version => nil)
+      allow(@layer).to receive(:ami_id=)
+      allow(@layer).to receive(:ami_id)
+      allow(@layer).to receive(:agent_version=)
+      allow(@layer).to receive(:agent_version)
       @new_instance = double('new_instance', :instance_id => 1029384756)
       @opsworks = double('opsworks', :create_instance => @new_instance)
       @cli = double('cli', :ask => 2)
@@ -25,7 +29,18 @@ module Opsicle
       it "should make a unique incremented hostname" do
         instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
         expect(instance).to receive(:increment_hostname).and_return('example-hostname-03')
-        instance.make_new_hostname('example-hostname-01', ['example-hostname-01', 'example-hostname-02'])
+        instance1 = double('instance', :hostname => 'example-hostname-01')
+        instance2 = double('instance', :hostname => 'example-hostname-02')
+        allow(@layer).to receive(:instances).and_return([instance1, instance2])
+        instance.make_new_hostname('example-hostname-01')
+      end
+
+      it "should make a unique incremented hostname" do
+        instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
+        instance1 = double('instance', :hostname => 'example-hostname-01')
+        instance2 = double('instance', :hostname => 'example-hostname-02')
+        expect(@layer).to receive(:instances).and_return([instance1, instance2])
+        instance.make_new_hostname('example-hostname-01')
       end
     end
 
@@ -40,16 +55,15 @@ module Opsicle
     context "#clone" do
       it "should grab instances and make new hostname" do
         instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
-        expect(@layer).to receive(:instances)
         expect(instance).to receive(:make_new_hostname).and_return('example-hostname-03')
         instance.clone({})
       end
 
       it "should get information from old instance" do
         instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
-        expect(instance).to receive(:agent_version)
-        expect(instance).to receive(:ami_id)
-        expect(instance).to receive(:instance_type)
+        expect(instance).to receive(:verify_ami_id)
+        expect(instance).to receive(:verify_agent_version)
+        expect(instance).to receive(:verify_instance_type)
         instance.clone({})
       end
 
@@ -57,6 +71,51 @@ module Opsicle
         instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
         expect(instance).to receive(:create_new_instance)
         instance.clone({})
+      end
+    end
+
+    context '#verify_agent_version' do
+      it "should check the agent version and ask if the user wants a new agent version" do
+        @cli = double('cli', :ask => 1)
+        instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
+        allow(@layer).to receive(:agent_version).and_return(nil)
+        allow_any_instance_of(HighLine).to receive(:ask).with("Do you wish to override this version? By overriding, you are choosing to override the current agent version for all instances you are cloning.\n1) Yes\n2) No", Integer).and_return(1)
+        expect(instance).to receive(:get_new_agent_version)
+        instance.verify_agent_version
+      end
+
+      it "should see if the layer already has overwritten the agent version" do
+        instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
+        expect(@layer).to receive(:agent_version)
+        instance.verify_agent_version
+      end
+    end
+
+    context '#verify_ami_id' do
+      it "should check the ami id and ask if the user wants a new ami" do
+        @cli = double('cli', :ask => 1)
+        instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
+        allow(@layer).to receive(:ami_id).and_return(nil)
+        allow_any_instance_of(HighLine).to receive(:ask).with("Do you wish to override this AMI? By overriding, you are choosing to override the current AMI for all instances you are cloning.\n1) Yes\n2) No", Integer).and_return(1)
+        expect(@cli).to receive(:ask).twice
+        instance.verify_ami_id
+      end
+
+      it "should see if the layer already has overwritten the ami id" do
+        instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
+        expect(@layer).to receive(:ami_id)
+        instance.verify_ami_id
+      end
+    end
+
+    context '#verify_instance_type' do
+      it "should check the agent version and ask if the user wants a new agent version" do
+        @cli = double('cli', :ask => 1)
+        instance = CloneableInstance.new(@instance, @layer, @opsworks, @cli)
+        allow(@layer).to receive(:ami_id).and_return(nil)
+        allow_any_instance_of(HighLine).to receive(:ask).with("Do you wish to override this instance type?\n1) Yes\n2) No", Integer).and_return(1)
+        expect(@cli).to receive(:ask).twice
+        instance.verify_instance_type
       end
     end
 
