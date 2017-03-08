@@ -1,3 +1,8 @@
+#### v2.3.1
+* Ruby Compatibility
+
+  > Brian Bergstrom: : https://github.com/sportngin/opsicle/pull/116
+
 #### v2.3.0
 * Add ability to override AMI id, agent version, and instance type when cloning an instance
 
